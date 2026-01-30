@@ -1,18 +1,11 @@
 /**
- * TTS Service using Web Speech API with improved mobile reliability
+ * TTS Service using Web Speech API
  *
- * This implementation uses a hybrid approach:
- * - Desktop: Native language voices (e.g., Hebrew) for authentic pronunciation
- * - Mobile: English transliteration by default for better reliability
+ * Simple implementation that speaks native language text directly:
  * - Always creates fresh utterances to prevent stuck state
  * - Minimal state management to avoid corruption
  * - Delays between utterances to let the engine reset
- * - Automatic fallback chain when voices fail
- *
- * Mobile browsers often have limited or no support for non-English voices,
- * so we default to English pronunciation of transliterations on mobile.
- * Users can override this by calling resetTransliterationFor(locale) if
- * their mobile browser supports the native language voice.
+ * - No automatic fallbacks or transliteration logic
  */
 
 class TtsService {
@@ -24,36 +17,8 @@ class TtsService {
     this.voicesLoaded = false;
     this.voiceLoadCallbacks = [];
 
-    // Track locales that have failed and should use transliteration
-    this.forceTranslitForLocale = this.loadTranslitPreferences();
-
     // Initialize voice loading
     this.initVoiceLoading();
-  }
-
-  /**
-   * Load transliteration preferences from localStorage
-   */
-  loadTranslitPreferences() {
-    try {
-      const stored = localStorage.getItem('tts_force_translit');
-      return stored ? JSON.parse(stored) : {};
-    } catch (e) {
-      return {};
-    }
-  }
-
-  /**
-   * Save that a locale should use transliteration
-   */
-  saveTranslitPreference(locale, useTranslit) {
-    try {
-      this.forceTranslitForLocale[locale] = useTranslit;
-      localStorage.setItem('tts_force_translit', JSON.stringify(this.forceTranslitForLocale));
-      console.log('[TTS] Saved preference: use transliteration for', locale);
-    } catch (e) {
-      console.warn('[TTS] Could not save preference:', e);
-    }
   }
 
   /**
@@ -158,19 +123,6 @@ class TtsService {
   }
 
   /**
-   * Normalize transliteration for better pronunciation
-   */
-  normalizeTranslit(text) {
-    if (!text) return '';
-    return text
-      .trim()
-      .replace(/'/g, '')
-      .replace(/-/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
-
-  /**
    * Get the best voice for a locale
    */
   pickVoiceForLocale(locale, synth) {
@@ -203,14 +155,13 @@ class TtsService {
   }
 
   /**
-   * Smart speak: tries native voice, falls back to transliteration
+   * Speak native language text directly using Web Speech API
    * MUST be synchronous to preserve user gesture on mobile
    */
   speakSmart({ nativeText, nativeLocale, transliteration, mode = 'word' }) {
-    console.log('[TTS] speakSmart called:', { nativeText, nativeLocale, transliteration });
+    console.log('[TTS] speakSmart called:', { nativeText, nativeLocale });
 
-    // Get a FRESH reference to speechSynthesis each time (issue #3)
-    // Like creating new Audio() object - prevents stuck state on mobile
+    // Get a FRESH reference to speechSynthesis each time
     const synth = this.getSynth();
 
     if (!synth) {
@@ -218,8 +169,7 @@ class TtsService {
       return;
     }
 
-    // On mobile, enforce a minimum delay between utterances to let engine reset
-    // Return early if too soon (don't use await - it breaks user gesture!)
+    // Enforce minimum delay between utterances
     const now = Date.now();
     const timeSinceLastSpeak = now - this.lastSpeakTime;
     const minDelay = this.isMobile() ? 300 : 100;
@@ -227,17 +177,16 @@ class TtsService {
     if (timeSinceLastSpeak < minDelay) {
       const waitTime = minDelay - timeSinceLastSpeak;
       console.log(`[TTS] Ignoring click - too soon (wait ${waitTime}ms more)`);
-      return; // Don't wait, just ignore the click
+      return;
     }
 
-    // Only cancel if there's something to cancel (prevents breaking the engine)
-    // Calling cancel() on an idle engine can cause it to enter a broken state on Android
+    // Only cancel if there's something to cancel
     if (synth.speaking || synth.pending) {
       console.log('[TTS] Canceling existing speech');
       synth.cancel();
     }
 
-    // Only resume if actually paused (calling resume() on non-paused engine may break it)
+    // Only resume if actually paused
     if (synth.paused) {
       console.log('[TTS] Engine is paused, calling resume()');
       synth.resume();
@@ -247,38 +196,16 @@ class TtsService {
     this.isSpeaking = false;
     this.currentUtterance = null;
 
-    // Determine what to speak
-    let textToSpeak = nativeText;
-    let locale = nativeLocale;
+    // Use native text directly
+    const textToSpeak = nativeText;
+    const locale = nativeLocale;
 
     if (!textToSpeak || textToSpeak === '—') {
-      if (transliteration) {
-        textToSpeak = this.normalizeTranslit(transliteration);
-        locale = 'en-US';
-      } else {
-        console.warn('[TTS] No text to speak');
-        return;
-      }
+      console.warn('[TTS] No text to speak');
+      return;
     }
 
     console.log('[TTS] Will speak:', textToSpeak, 'in locale:', locale);
-
-    // Check if we should force transliteration for this locale
-    if (this.forceTranslitForLocale[locale] === true && transliteration && locale !== 'en-US') {
-      console.log('[TTS] Using transliteration (saved preference for', locale, ')');
-      textToSpeak = this.normalizeTranslit(transliteration);
-      locale = 'en-US';
-    }
-
-    // MOBILE OPTIMIZATION: On mobile, prefer transliteration (English) from the start
-    // English voices are more reliably available on mobile browsers
-    // Only do this if there's no explicit saved preference (undefined)
-    if (this.isMobile() && locale !== 'en-US' && transliteration &&
-        this.forceTranslitForLocale[locale] === undefined) {
-      console.log('[TTS] Mobile detected - using transliteration for better reliability');
-      textToSpeak = this.normalizeTranslit(transliteration);
-      locale = 'en-US';
-    }
 
     // Get voices - if not loaded yet, use default voice
     // We can't wait for voices without breaking the user gesture
@@ -331,29 +258,8 @@ class TtsService {
       this.isSpeaking = false;
       this.currentUtterance = null;
       this.notifyListeners('end');
-
-      // Check if it finished suspiciously quickly (probably didn't play)
       const duration = Date.now() - this.lastSpeakTime;
-      if (!started || duration < 100) {
-        console.warn('[TTS] ⚠️ Finished too quickly (', duration, 'ms), probably did not play audio');
-
-        // Try fallback to transliteration if we haven't already and this was a non-English voice
-        if (locale !== 'en-US' && transliteration && !this.forceTranslitForLocale[nativeLocale]) {
-          console.log('[TTS] Retrying with English transliteration fallback...');
-          // Save preference to use transliteration for this locale in the future
-          this.saveTranslitPreference(nativeLocale, true);
-          setTimeout(() => {
-            this.speakSmart({
-              nativeText: this.normalizeTranslit(transliteration),
-              nativeLocale: 'en-US',
-              transliteration,
-              mode
-            });
-          }, 100);
-        }
-      } else {
-        console.log('[TTS] ✓ Finished speaking (', duration, 'ms)');
-      }
+      console.log('[TTS] ✓ Finished speaking (', duration, 'ms)');
     };
 
     utterance.onerror = (event) => {
@@ -362,36 +268,12 @@ class TtsService {
       this.currentUtterance = null;
       console.error('[TTS] ✗ Error:', event.error);
       this.notifyListeners('error', event.error);
-
-      // Try English fallback if appropriate
-      if (event.error === 'language-unavailable' && locale !== 'en-US' && transliteration) {
-        console.log('[TTS] Language unavailable, trying English fallback...');
-        // Save preference to use transliteration for this locale in the future
-        this.saveTranslitPreference(nativeLocale, true);
-        setTimeout(() => {
-          this.speakSmart({
-            nativeText: this.normalizeTranslit(transliteration),
-            nativeLocale: 'en-US',
-            transliteration,
-            mode
-          });
-        }, 100);
-      }
     };
 
     // Speak the utterance
     console.log('[TTS] Calling synth.speak()...');
     synth.speak(utterance);
     this.lastSpeakTime = Date.now();
-
-    // Safety timeout: if speaking didn't start after 2 seconds, assume it failed
-    setTimeout(() => {
-      if (!started && !ended) {
-        console.warn('[TTS] Speech did not start within 2 seconds');
-        this.isSpeaking = false;
-        this.notifyListeners('error', 'timeout');
-      }
-    }, 2000);
   }
 
   /**
@@ -412,22 +294,6 @@ class TtsService {
     if (synth && synth.paused) {
       synth.resume();
     }
-  }
-
-  /**
-   * Force using transliteration for a locale (useful when native voice fails silently)
-   */
-  useTransliterationFor(locale) {
-    console.log('[TTS] Manually enabling transliteration for', locale);
-    this.saveTranslitPreference(locale, true);
-  }
-
-  /**
-   * Reset transliteration preference for a locale (try native voice again)
-   */
-  resetTransliterationFor(locale) {
-    console.log('[TTS] Resetting transliteration preference for', locale);
-    this.saveTranslitPreference(locale, false);
   }
 
   /**
@@ -481,8 +347,6 @@ const ttsService = new TtsService();
 if (typeof window !== 'undefined') {
   window.ttsService = ttsService;
   console.log('[TTS] Service available at window.ttsService');
-  console.log('[TTS] To force transliteration: window.ttsService.useTransliterationFor("he-IL")');
-  console.log('[TTS] To reset: window.ttsService.resetTransliterationFor("he-IL")');
 }
 
 export default ttsService;

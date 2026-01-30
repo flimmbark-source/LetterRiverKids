@@ -5,9 +5,7 @@ import ttsService from '../lib/ttsService';
  * SpeakButton Component
  *
  * A button that triggers text-to-speech for the current word or sentence.
- * Uses Web Speech API with smart platform detection:
- * - Desktop: Uses native language voices for authentic pronunciation
- * - Mobile: Uses English transliteration for better reliability
+ * Uses Web Speech API to speak native language text directly.
  *
  * Props:
  * @param {string} nativeText - Text in native script (e.g., "שלום")
