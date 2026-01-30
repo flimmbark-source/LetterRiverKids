@@ -53,8 +53,9 @@ class TtsService {
     const params = new URLSearchParams({
       ie: 'UTF-8',
       tl: locale.split('-')[0], // Just use language code (he, en, es, etc.)
-      client: 'tw-ob',
+      client: 'gtx', // Use 'gtx' client for better compatibility
       q: text,
+      textlen: text.length.toString(),
     });
     return `${baseUrl}?${params.toString()}`;
   }
@@ -143,7 +144,7 @@ class TtsService {
     const ttsUrl = this.buildTtsUrl(textToSpeak, locale);
     console.log('[TTS] Audio URL:', ttsUrl);
 
-    // Create and configure audio element
+    // Create audio element with the URL - must be synchronous to preserve user gesture
     const audio = new Audio(ttsUrl);
     this.currentAudio = audio;
 
@@ -179,7 +180,7 @@ class TtsService {
       const duration = Date.now() - startTime;
       this.isSpeaking = false;
       this.currentAudio = null;
-      console.error('[TTS] ✗ Audio error:', audio.error);
+      console.error('[TTS] ✗ Audio error:', audio.error, 'Code:', audio.error?.code);
       this.notifyListeners('error', audio.error);
 
       // Try English fallback if this was a foreign language
@@ -208,7 +209,7 @@ class TtsService {
       console.log('[TTS] Audio aborted');
     };
 
-    // Start playback
+    // Start playback immediately - this must be synchronous to work on mobile
     const playPromise = audio.play();
 
     if (playPromise !== undefined) {
