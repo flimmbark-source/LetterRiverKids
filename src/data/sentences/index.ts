@@ -224,12 +224,12 @@ export const sentencesByTheme: Record<string, Sentence[]> = {
     // Pair 3: Thanking for coming
     createSentence({
       id: 'greetings-3-short',
-      hebrew: 'תודה שבאת היום.',
-      english: 'Thanks for coming today.',
-      pattern: "{Thanks, Thank you} for coming today.",
+      hebrew: 'תודה שבאת.',
+      english: 'Thanks for coming.',
+      pattern: "{Thanks, Thank you} for coming.",
       theme: 'Greetings & Introductions',
       difficulty: 1,
-      grammarPoints: ['gratitude', 'time reference']
+      grammarPoints: ['gratitude']
     }),
     createSentence({
       id: 'greetings-3',
@@ -238,7 +238,7 @@ export const sentencesByTheme: Record<string, Sentence[]> = {
       pattern: "{Thanks, Thank you} for coming today, we were waiting for you.",
       theme: 'Greetings & Introductions',
       difficulty: 1,
-      grammarPoints: ['gratitude', 'present tense linking']
+      grammarPoints: ['gratitude', 'time reference']
     }),
 
     // Pair 4: Being happy together
@@ -284,21 +284,21 @@ export const sentencesByTheme: Record<string, Sentence[]> = {
     // Pair 6: Asking about the day
     createSentence({
       id: 'greetings-6-short',
-      hebrew: 'איך אתה?',
-      english: 'How are you?',
-      pattern: "How are you?",
+      hebrew: 'איך היום?',
+      english: "How's today?",
+      pattern: "{How's, How is} today?",
       theme: 'Greetings & Introductions',
       difficulty: 1,
-      grammarPoints: ['questions', 'greeting']
+      grammarPoints: ['questions', 'time reference']
     }),
     createSentence({
       id: 'greetings-6',
       hebrew: 'איך היום שלך?',
-      english: 'How is your day today?',
+      english: 'How is your day?',
       pattern: "How is your day {today, going}?",
       theme: 'Greetings & Introductions',
       difficulty: 2,
-      grammarPoints: ['questions', 'time adverb']
+      grammarPoints: ['questions', 'possession']
     }),
 
     // Pair 7: Asking a question
