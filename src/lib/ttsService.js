@@ -1,27 +1,22 @@
 /**
- * TTS Service using Web Speech API with improved mobile reliability
+ * TTS Service using HTML5 Audio with Google Translate TTS
  *
- * This implementation uses a simpler, more reliable approach for mobile:
- * - Always creates fresh utterances
- * - Minimal state management to avoid corruption
- * - Delays between utterances to let the engine reset
- * - No aggressive recovery logic that can make things worse
+ * This implementation uses HTML5 Audio for reliable mobile playback:
+ * - Uses Google Translate TTS API for audio generation
+ * - Works reliably on all mobile browsers
+ * - No autoplay restrictions or gesture chain issues
+ * - Graceful fallback to transliteration when needed
  */
 
 class TtsService {
   constructor() {
-    this.currentUtterance = null;
+    this.currentAudio = null;
     this.listeners = new Set();
     this.isSpeaking = false;
     this.lastSpeakTime = 0;
-    this.voicesLoaded = false;
-    this.voiceLoadCallbacks = [];
 
     // Track locales that have failed and should use transliteration
     this.forceTranslitForLocale = this.loadTranslitPreferences();
-
-    // Initialize voice loading
-    this.initVoiceLoading();
   }
 
   /**
@@ -50,77 +45,18 @@ class TtsService {
   }
 
   /**
-   * Initialize voice loading - voices may load asynchronously
+   * Build Google Translate TTS URL
    */
-  initVoiceLoading() {
-    const synth = this.getSynth();
-    if (!synth) return;
-
-    // Check if voices are already available
-    const voices = synth.getVoices();
-    if (voices.length > 0) {
-      console.log('[TTS] Voices already loaded:', voices.length);
-      this.voicesLoaded = true;
-      this.logAvailableVoices();
-      return;
-    }
-
-    // Listen for voices to load
-    if ('onvoiceschanged' in synth) {
-      synth.onvoiceschanged = () => {
-        const newVoices = synth.getVoices();
-        console.log('[TTS] Voices loaded:', newVoices.length);
-        this.voicesLoaded = true;
-        this.logAvailableVoices();
-
-        // Notify any waiting callbacks
-        this.voiceLoadCallbacks.forEach(cb => cb());
-        this.voiceLoadCallbacks = [];
-      };
-    } else {
-      // Fallback: assume voices are available immediately
-      this.voicesLoaded = true;
-    }
-  }
-
-  /**
-   * Log available voices for debugging
-   */
-  logAvailableVoices() {
-    const synth = this.getSynth();
-    if (!synth) return;
-
-    const voices = synth.getVoices();
-    const hebrewVoices = voices.filter(v => {
-      const lang = v.lang.toLowerCase().replace(/^iw(\b|[-_])/i, 'he$1');
-      return lang.startsWith('he');
+  buildTtsUrl(text, locale) {
+    // Google Translate TTS API
+    const baseUrl = 'https://translate.google.com/translate_tts';
+    const params = new URLSearchParams({
+      ie: 'UTF-8',
+      tl: locale.split('-')[0], // Just use language code (he, en, es, etc.)
+      client: 'tw-ob',
+      q: text,
     });
-
-    console.log('[TTS] Total voices available:', voices.length);
-    console.log('[TTS] Hebrew voices:', hebrewVoices.length);
-    if (hebrewVoices.length > 0) {
-      console.log('[TTS] Hebrew voices:', hebrewVoices.map(v => `${v.name} (${v.lang})`).join(', '));
-    }
-  }
-
-  /**
-   * Get a fresh reference to speechSynthesis
-   * Like creating a new Audio() object - prevents stuck state on mobile
-   */
-  getSynth() {
-    return typeof window !== 'undefined' ? window.speechSynthesis : null;
-  }
-
-  /**
-   * Initialize the TTS service
-   */
-  initTts() {
-    const synth = this.getSynth();
-    if (!synth) {
-      console.warn('[TTS] Speech Synthesis not available');
-      return Promise.resolve();
-    }
-    return Promise.resolve();
+    return `${baseUrl}?${params.toString()}`;
   }
 
   /**
@@ -134,20 +70,16 @@ class TtsService {
    * Stop any current speech and clean up
    */
   stop() {
-    const synth = this.getSynth();
-    if (!synth) return;
-
-    // Only cancel if actually speaking to avoid interfering with the engine
-    if (synth.speaking || synth.pending) {
-      synth.cancel();
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio.currentTime = 0;
+      this.currentAudio = null;
     }
 
     if (this.isSpeaking) {
       this.isSpeaking = false;
       this.notifyListeners('cancel');
     }
-
-    this.currentUtterance = null;
   }
 
   /**
@@ -164,55 +96,13 @@ class TtsService {
   }
 
   /**
-   * Get the best voice for a locale
-   */
-  pickVoiceForLocale(locale, synth) {
-    if (!synth || !locale) return null;
-
-    const voices = synth.getVoices();
-    const normalizedLocale = locale.toLowerCase().replace(/^iw(\b|[-_])/i, 'he$1');
-    const langCode = normalizedLocale.split('-')[0];
-
-    // Score and sort voices
-    const scored = voices
-      .map((voice, index) => {
-        const voiceLang = voice.lang.toLowerCase().replace(/^iw(\b|[-_])/i, 'he$1');
-        const voiceLangCode = voiceLang.split('-')[0];
-
-        let score = 0;
-        if (voiceLang === normalizedLocale) score += 10;
-        else if (voiceLangCode === langCode) score += 5;
-
-        if (voice.localService) score += 2;
-        if (/google/i.test(voice.name)) score += 3;
-        if (/espeak/i.test(voice.name)) score -= 5;
-
-        return { voice, score, index };
-      })
-      .filter(({ score }) => score > 0)
-      .sort((a, b) => b.score - a.score || a.index - b.index);
-
-    return scored.length > 0 ? scored[0].voice : null;
-  }
-
-  /**
-   * Smart speak: tries native voice, falls back to transliteration
-   * MUST be synchronous to preserve user gesture on mobile
+   * Smart speak: tries native voice with Google TTS, falls back to transliteration
+   * Uses HTML5 Audio for reliable mobile playback
    */
   speakSmart({ nativeText, nativeLocale, transliteration, mode = 'word' }) {
     console.log('[TTS] speakSmart called:', { nativeText, nativeLocale, transliteration });
 
-    // Get a FRESH reference to speechSynthesis each time (issue #3)
-    // Like creating new Audio() object - prevents stuck state on mobile
-    const synth = this.getSynth();
-
-    if (!synth) {
-      console.warn('[TTS] Speech synthesis not available');
-      return;
-    }
-
-    // On mobile, enforce a minimum delay between utterances to let engine reset
-    // Return early if too soon (don't use await - it breaks user gesture!)
+    // On mobile, enforce a minimum delay between utterances
     const now = Date.now();
     const timeSinceLastSpeak = now - this.lastSpeakTime;
     const minDelay = this.isMobile() ? 300 : 100;
@@ -220,25 +110,11 @@ class TtsService {
     if (timeSinceLastSpeak < minDelay) {
       const waitTime = minDelay - timeSinceLastSpeak;
       console.log(`[TTS] Ignoring click - too soon (wait ${waitTime}ms more)`);
-      return; // Don't wait, just ignore the click
+      return;
     }
 
-    // Only cancel if there's something to cancel (prevents breaking the engine)
-    // Calling cancel() on an idle engine can cause it to enter a broken state on Android
-    if (synth.speaking || synth.pending) {
-      console.log('[TTS] Canceling existing speech');
-      synth.cancel();
-    }
-
-    // Only resume if actually paused (calling resume() on non-paused engine may break it)
-    if (synth.paused) {
-      console.log('[TTS] Engine is paused, calling resume()');
-      synth.resume();
-    }
-
-    // Clear our state
-    this.isSpeaking = false;
-    this.currentUtterance = null;
+    // Stop any current audio
+    this.stop();
 
     // Determine what to speak
     let textToSpeak = nativeText;
@@ -263,93 +139,52 @@ class TtsService {
       locale = 'en-US';
     }
 
-    // Get voices - if not loaded yet, use default voice
-    // We can't wait for voices without breaking the user gesture
-    const voices = synth.getVoices();
+    // Build the TTS URL
+    const ttsUrl = this.buildTtsUrl(textToSpeak, locale);
+    console.log('[TTS] Audio URL:', ttsUrl);
 
-    if (voices.length === 0) {
-      console.log('[TTS] Voices not loaded yet, using default');
-    }
+    // Create and configure audio element
+    const audio = new Audio(ttsUrl);
+    this.currentAudio = audio;
 
-    // Find the best voice for this locale
-    const voice = this.pickVoiceForLocale(locale, synth);
-
-    if (voice) {
-      console.log('[TTS] Selected voice:', voice.name, '(', voice.lang, ')');
-    } else {
-      console.log('[TTS] No specific voice found, using browser default for locale:', locale);
-    }
-
-    // Create a fresh utterance
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-
-    if (voice) {
-      utterance.voice = voice;
-      utterance.lang = voice.lang;
-      console.log('[TTS] Using voice:', voice.name, 'with lang:', voice.lang);
-    } else {
-      utterance.lang = locale;
-      console.log('[TTS] Using default voice with lang:', locale);
-    }
-
-    utterance.rate = mode === 'sentence' ? 0.9 : 0.85;
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
-
-    // Track state
-    this.currentUtterance = utterance;
-    let started = false;
-    let ended = false;
+    // Track timing for fallback detection
+    const startTime = Date.now();
+    let hasStarted = false;
 
     // Set up event handlers
-    utterance.onstart = () => {
-      started = true;
+    audio.onloadstart = () => {
+      console.log('[TTS] Audio loading started');
+    };
+
+    audio.oncanplay = () => {
+      console.log('[TTS] Audio can play');
+    };
+
+    audio.onplay = () => {
+      hasStarted = true;
       this.isSpeaking = true;
       this.notifyListeners('start');
-      console.log('[TTS] ✓ Started speaking');
+      console.log('[TTS] ✓ Started playing audio');
     };
 
-    utterance.onend = () => {
-      ended = true;
+    audio.onended = () => {
+      const duration = Date.now() - startTime;
       this.isSpeaking = false;
-      this.currentUtterance = null;
+      this.currentAudio = null;
       this.notifyListeners('end');
-
-      // Check if it finished suspiciously quickly (probably didn't play)
-      const duration = Date.now() - this.lastSpeakTime;
-      if (!started || duration < 100) {
-        console.warn('[TTS] ⚠️ Finished too quickly (', duration, 'ms), probably did not play audio');
-
-        // Try fallback to transliteration if we haven't already and this was a non-English voice
-        if (locale !== 'en-US' && transliteration && !this.forceTranslitForLocale[nativeLocale]) {
-          console.log('[TTS] Retrying with English transliteration fallback...');
-          // Save preference to use transliteration for this locale in the future
-          this.saveTranslitPreference(nativeLocale, true);
-          setTimeout(() => {
-            this.speakSmart({
-              nativeText: this.normalizeTranslit(transliteration),
-              nativeLocale: 'en-US',
-              transliteration,
-              mode
-            });
-          }, 100);
-        }
-      } else {
-        console.log('[TTS] ✓ Finished speaking (', duration, 'ms)');
-      }
+      console.log('[TTS] ✓ Finished playing audio (', duration, 'ms)');
     };
 
-    utterance.onerror = (event) => {
-      ended = true;
+    audio.onerror = (event) => {
+      const duration = Date.now() - startTime;
       this.isSpeaking = false;
-      this.currentUtterance = null;
-      console.error('[TTS] ✗ Error:', event.error);
-      this.notifyListeners('error', event.error);
+      this.currentAudio = null;
+      console.error('[TTS] ✗ Audio error:', audio.error);
+      this.notifyListeners('error', audio.error);
 
-      // Try English fallback if appropriate
-      if (event.error === 'language-unavailable' && locale !== 'en-US' && transliteration) {
-        console.log('[TTS] Language unavailable, trying English fallback...');
-        // Save preference to use transliteration for this locale in the future
+      // Try English fallback if this was a foreign language
+      if (locale !== 'en-US' && transliteration && !this.forceTranslitForLocale[nativeLocale]) {
+        console.log('[TTS] Audio failed, trying English transliteration fallback...');
         this.saveTranslitPreference(nativeLocale, true);
         setTimeout(() => {
           this.speakSmart({
@@ -362,28 +197,77 @@ class TtsService {
       }
     };
 
-    // Speak the utterance
-    console.log('[TTS] Calling synth.speak()...');
-    synth.speak(utterance);
+    audio.onpause = () => {
+      console.log('[TTS] Audio paused');
+    };
+
+    audio.onabort = () => {
+      this.isSpeaking = false;
+      this.currentAudio = null;
+      this.notifyListeners('cancel');
+      console.log('[TTS] Audio aborted');
+    };
+
+    // Start playback
+    const playPromise = audio.play();
+
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log('[TTS] Audio play() promise resolved');
+        })
+        .catch((error) => {
+          console.error('[TTS] Audio play() promise rejected:', error);
+          this.isSpeaking = false;
+          this.currentAudio = null;
+          this.notifyListeners('error', error);
+
+          // Try English fallback
+          if (locale !== 'en-US' && transliteration && !this.forceTranslitForLocale[nativeLocale]) {
+            console.log('[TTS] Play rejected, trying English transliteration fallback...');
+            this.saveTranslitPreference(nativeLocale, true);
+            setTimeout(() => {
+              this.speakSmart({
+                nativeText: this.normalizeTranslit(transliteration),
+                nativeLocale: 'en-US',
+                transliteration,
+                mode
+              });
+            }, 100);
+          }
+        });
+    }
+
     this.lastSpeakTime = Date.now();
 
-    // Safety timeout: if speaking didn't start after 2 seconds, assume it failed
+    // Safety timeout: if audio didn't start after 3 seconds, assume it failed
     setTimeout(() => {
-      if (!started && !ended) {
-        console.warn('[TTS] Speech did not start within 2 seconds');
+      if (!hasStarted && this.currentAudio === audio) {
+        console.warn('[TTS] Audio did not start within 3 seconds');
         this.isSpeaking = false;
         this.notifyListeners('error', 'timeout');
+
+        // Try English fallback
+        if (locale !== 'en-US' && transliteration && !this.forceTranslitForLocale[nativeLocale]) {
+          console.log('[TTS] Timeout, trying English transliteration fallback...');
+          this.saveTranslitPreference(nativeLocale, true);
+          this.speakSmart({
+            nativeText: this.normalizeTranslit(transliteration),
+            nativeLocale: 'en-US',
+            transliteration,
+            mode
+          });
+        }
       }
-    }, 2000);
+    }, 3000);
   }
 
   /**
    * Pause current speech
    */
   pause() {
-    const synth = this.getSynth();
-    if (synth && this.isSpeaking) {
-      synth.pause();
+    if (this.currentAudio && this.isSpeaking) {
+      this.currentAudio.pause();
     }
   }
 
@@ -391,9 +275,8 @@ class TtsService {
    * Resume paused speech
    */
   resume() {
-    const synth = this.getSynth();
-    if (synth && synth.paused) {
-      synth.resume();
+    if (this.currentAudio && this.currentAudio.paused) {
+      this.currentAudio.play();
     }
   }
 

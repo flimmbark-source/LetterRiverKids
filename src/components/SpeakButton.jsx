@@ -7,6 +7,12 @@ import ttsService from '../lib/ttsService';
  * A button that triggers text-to-speech for the current word or sentence.
  * Uses HTML5 Audio with Google Translate TTS for reliable mobile playback.
  *
+ * Key features:
+ * - Works reliably on all mobile browsers including iOS Safari
+ * - No autoplay restrictions or user gesture chain issues
+ * - Automatic fallback to English transliteration if native audio fails
+ * - Visual feedback with pulsing animation during playback
+ *
  * Props:
  * @param {string} nativeText - Text in native script (e.g., "שלום")
  * @param {string} nativeLocale - BCP 47 locale (e.g., "he-IL", "es-ES")
