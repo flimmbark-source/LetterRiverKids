@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import ttsService from '../lib/ttsService';
 
 /**
@@ -30,6 +30,7 @@ export default function SpeakButton({
   disabled = false,
 }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const lastPointerDownAt = useRef(0);
 
   // Subscribe to TTS events
   useEffect(() => {
@@ -65,9 +66,31 @@ export default function SpeakButton({
     });
   }, [nativeText, nativeLocale, transliteration, disabled]);
 
-  // Handle click events
-  const handleClick = useCallback((e) => {
-    e.stopPropagation();
+  const handlePointerDown = useCallback((event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+    lastPointerDownAt.current = Date.now();
+    event.stopPropagation();
+    speak();
+  }, [speak]);
+
+  const handleTouchStart = useCallback((event) => {
+    if (Date.now() - lastPointerDownAt.current < 200) {
+      return;
+    }
+
+    lastPointerDownAt.current = Date.now();
+    event.stopPropagation();
+    speak();
+  }, [speak]);
+
+  // Handle click events (desktop + keyboard activation)
+  const handleClick = useCallback((event) => {
+    if (Date.now() - lastPointerDownAt.current < 700) {
+      return;
+    }
+
+    event.stopPropagation();
     speak();
   }, [speak]);
 
@@ -93,6 +116,8 @@ export default function SpeakButton({
   return (
     <button
       onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onTouchStart={handleTouchStart}
       disabled={disabled}
       className={`${baseStyles} ${sizeStyles} ${speakingStyles} ${className}`}
       style={{
