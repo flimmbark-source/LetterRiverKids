@@ -1,11 +1,18 @@
 /**
  * TTS Service using Web Speech API with improved mobile reliability
  *
- * This implementation uses a simpler, more reliable approach for mobile:
- * - Always creates fresh utterances
+ * This implementation uses a hybrid approach:
+ * - Desktop: Native language voices (e.g., Hebrew) for authentic pronunciation
+ * - Mobile: English transliteration by default for better reliability
+ * - Always creates fresh utterances to prevent stuck state
  * - Minimal state management to avoid corruption
  * - Delays between utterances to let the engine reset
- * - No aggressive recovery logic that can make things worse
+ * - Automatic fallback chain when voices fail
+ *
+ * Mobile browsers often have limited or no support for non-English voices,
+ * so we default to English pronunciation of transliterations on mobile.
+ * Users can override this by calling resetTransliterationFor(locale) if
+ * their mobile browser supports the native language voice.
  */
 
 class TtsService {
@@ -257,8 +264,18 @@ class TtsService {
     console.log('[TTS] Will speak:', textToSpeak, 'in locale:', locale);
 
     // Check if we should force transliteration for this locale
-    if (this.forceTranslitForLocale[locale] && transliteration && locale !== 'en-US') {
+    if (this.forceTranslitForLocale[locale] === true && transliteration && locale !== 'en-US') {
       console.log('[TTS] Using transliteration (saved preference for', locale, ')');
+      textToSpeak = this.normalizeTranslit(transliteration);
+      locale = 'en-US';
+    }
+
+    // MOBILE OPTIMIZATION: On mobile, prefer transliteration (English) from the start
+    // English voices are more reliably available on mobile browsers
+    // Only do this if there's no explicit saved preference (undefined)
+    if (this.isMobile() && locale !== 'en-US' && transliteration &&
+        this.forceTranslitForLocale[locale] === undefined) {
+      console.log('[TTS] Mobile detected - using transliteration for better reliability');
       textToSpeak = this.normalizeTranslit(transliteration);
       locale = 'en-US';
     }
