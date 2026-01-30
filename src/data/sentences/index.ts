@@ -224,12 +224,12 @@ export const sentencesByTheme: Record<string, Sentence[]> = {
     // Pair 3: Thanking for coming
     createSentence({
       id: 'greetings-3-short',
-      hebrew: 'תודה שבאת היום.',
-      english: 'Thanks for coming today.',
-      pattern: "{Thanks, Thank you} for coming today.",
+      hebrew: 'תודה שבאת.',
+      english: 'Thanks for coming.',
+      pattern: "{Thanks, Thank you} for coming.",
       theme: 'Greetings & Introductions',
       difficulty: 1,
-      grammarPoints: ['gratitude', 'time reference']
+      grammarPoints: ['gratitude']
     }),
     createSentence({
       id: 'greetings-3',
@@ -238,7 +238,7 @@ export const sentencesByTheme: Record<string, Sentence[]> = {
       pattern: "{Thanks, Thank you} for coming today, we were waiting for you.",
       theme: 'Greetings & Introductions',
       difficulty: 1,
-      grammarPoints: ['gratitude', 'present tense linking']
+      grammarPoints: ['gratitude', 'time reference']
     }),
 
     // Pair 4: Being happy together
@@ -284,21 +284,21 @@ export const sentencesByTheme: Record<string, Sentence[]> = {
     // Pair 6: Asking about the day
     createSentence({
       id: 'greetings-6-short',
-      hebrew: 'איך אתה?',
-      english: 'How are you?',
-      pattern: "How are you?",
+      hebrew: 'איך היום?',
+      english: "How's today?",
+      pattern: "{How's, How is} today?",
       theme: 'Greetings & Introductions',
       difficulty: 1,
-      grammarPoints: ['questions', 'greeting']
+      grammarPoints: ['questions', 'time reference']
     }),
     createSentence({
       id: 'greetings-6',
       hebrew: 'איך היום שלך?',
-      english: 'How is your day today?',
+      english: 'How is your day?',
       pattern: "How is your day {today, going}?",
       theme: 'Greetings & Introductions',
       difficulty: 2,
-      grammarPoints: ['questions', 'time adverb']
+      grammarPoints: ['questions', 'possession']
     }),
 
     // Pair 7: Asking a question
@@ -378,246 +378,603 @@ export const sentencesByTheme: Record<string, Sentence[]> = {
     })
   ],
   'At Home': [
+    // Pair 1: Home is full
+    createSentence({
+      id: 'home-1-short',
+      hebrew: 'הבית שלנו מלא.',
+      english: 'Our home is full.',
+      pattern: 'Our home is full.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['possession', 'adjectives']
+    }),
     createSentence({
       id: 'home-1',
       hebrew: 'הבית שלנו מלא במשפחה וחברים.',
       english: 'Our home is full of family and friends.',
+      pattern: 'Our home is full of family and friends.',
       theme: 'At Home',
       difficulty: 2,
       grammarPoints: ['possession', 'adjectives']
+    }),
+
+    // Pair 2: We are at home
+    createSentence({
+      id: 'home-2-short',
+      hebrew: 'אנחנו בבית.',
+      english: 'We are at home.',
+      pattern: "{We are, We're} at home.",
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['location', 'simple present']
     }),
     createSentence({
       id: 'home-2',
       hebrew: 'אנחנו אוהבים לשבת בבית ולדבר.',
       english: 'We like to sit at home and talk.',
+      pattern: 'We like to sit at home and talk.',
       theme: 'At Home',
       difficulty: 2,
       grammarPoints: ['verb + infinitive', 'prepositions']
+    }),
+
+    // Pair 3: I need a home
+    createSentence({
+      id: 'home-3-short',
+      hebrew: 'אני צריך בית.',
+      english: 'I need a home.',
+      pattern: 'I need a home.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['need statements']
     }),
     createSentence({
       id: 'home-3',
       hebrew: 'אני צריך בית שקט בערב.',
       english: 'I need a quiet home in the evening.',
+      pattern: 'I need a quiet home in the evening.',
       theme: 'At Home',
       difficulty: 1,
       grammarPoints: ['need statements', 'adjectives']
+    }),
+
+    // Pair 4: Neighbor helps us
+    createSentence({
+      id: 'home-4-short',
+      hebrew: 'שכן עוזר לנו.',
+      english: 'A neighbor helps us.',
+      pattern: '{A, The} neighbor helps us.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['present tense']
     }),
     createSentence({
       id: 'home-4',
       hebrew: 'שכן עוזר לנו כל יום בבית.',
       english: 'A neighbor helps us every day at home.',
+      pattern: '{A, The} neighbor helps us every day at home.',
       theme: 'At Home',
       difficulty: 2,
       grammarPoints: ['present tense', 'frequency adverb']
+    }),
+
+    // Pair 5: We study together
+    createSentence({
+      id: 'home-5-short',
+      hebrew: 'אנחנו לומדים יחד.',
+      english: 'We study together.',
+      pattern: 'We study together.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['plural subject', 'present tense']
     }),
     createSentence({
       id: 'home-5',
       hebrew: 'היום אנחנו לומדים בבית יחד.',
       english: 'Today we study at home together.',
+      pattern: 'Today we study at home together.',
       theme: 'At Home',
       difficulty: 2,
       grammarPoints: ['time adverb', 'location preposition']
+    }),
+
+    // Pair 6: I have an idea
+    createSentence({
+      id: 'home-6-short',
+      hebrew: 'יש לי רעיון.',
+      english: 'I have an idea.',
+      pattern: 'I have an idea.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['possession']
     }),
     createSentence({
       id: 'home-6',
       hebrew: 'יש לי רעיון קטן לבית שלנו.',
       english: 'I have a small idea for our home.',
+      pattern: 'I have a small idea for our home.',
       theme: 'At Home',
       difficulty: 3,
       grammarPoints: ['possession', 'infinitive purpose']
+    }),
+
+    // Pair 7: Child reads book
+    createSentence({
+      id: 'home-7-short',
+      hebrew: 'הילד קורא ספר.',
+      english: 'The child reads a book.',
+      pattern: 'The child reads a book.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['present tense']
     }),
     createSentence({
       id: 'home-7',
       hebrew: 'הילד קורא ספר בחדר שלו.',
       english: 'The child reads a book in his room.',
+      pattern: 'The child reads a book in his room.',
       theme: 'At Home',
       difficulty: 2,
       grammarPoints: ['present tense', 'location phrases']
+    }),
+
+    // Pair 8: We have water
+    createSentence({
+      id: 'home-8-short',
+      hebrew: 'יש לנו מים.',
+      english: 'We have water.',
+      pattern: 'We have water.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['possession']
     }),
     createSentence({
       id: 'home-8',
       hebrew: 'יש לנו מים וקפה במטבח.',
       english: 'We have water and coffee in the kitchen.',
+      pattern: 'We have water and coffee in the kitchen.',
       theme: 'At Home',
       difficulty: 1,
       grammarPoints: ['possession', 'conjunctions']
+    }),
+
+    // Pair 9: I want coffee
+    createSentence({
+      id: 'home-9-short',
+      hebrew: 'אני רוצה קפה.',
+      english: 'I want coffee.',
+      pattern: 'I want coffee.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['want statements']
     }),
     createSentence({
       id: 'home-9',
       hebrew: 'אני רוצה זמן שקט בבוקר עם קפה.',
       english: 'I want a quiet time in the morning with coffee.',
+      pattern: 'I want a quiet time in the morning with coffee.',
       theme: 'At Home',
       difficulty: 2,
       grammarPoints: ['time phrases', 'adjectives']
+    }),
+
+    // Pair 10: Friend lives nearby
+    createSentence({
+      id: 'home-10-short',
+      hebrew: 'החבר גר ליד.',
+      english: 'The friend lives nearby.',
+      pattern: 'The friend lives nearby.',
+      theme: 'At Home',
+      difficulty: 1,
+      grammarPoints: ['present tense', 'location']
     }),
     createSentence({
       id: 'home-10',
       hebrew: 'החבר גר ליד הבית שלנו',
       english: 'The friend lives near our home.',
+      pattern: 'The friend lives near our home.',
       theme: 'At Home',
       difficulty: 3,
       grammarPoints: ['location prepositions', 'possession']
     })
   ],
   'Food & Eating': [
+    // Pair 1: I want to eat
+    createSentence({
+      id: 'food-1-short',
+      hebrew: 'אני רוצה לאכול.',
+      english: 'I want to eat.',
+      pattern: 'I want to eat.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['verb + infinitive']
+    }),
     createSentence({
       id: 'food-1',
       hebrew: 'אני רוצה לאכול אוכל חם עכשיו.',
       english: 'I want to eat warm food right now.',
+      pattern: 'I want to eat warm food right now.',
       theme: 'Food & Eating',
       difficulty: 1,
       grammarPoints: ['verb + infinitive', 'adjectives']
+    }),
+
+    // Pair 2: We drink water
+    createSentence({
+      id: 'food-2-short',
+      hebrew: 'אנחנו שותים מים.',
+      english: 'We drink water.',
+      pattern: 'We drink water.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['plural subject', 'present tense']
     }),
     createSentence({
       id: 'food-2',
       hebrew: 'אנחנו שותים מים קרים יחד.',
       english: 'We drink cold water together.',
+      pattern: 'We drink cold water together.',
       theme: 'Food & Eating',
       difficulty: 1,
       grammarPoints: ['plural subject', 'adjectives']
+    }),
+
+    // Pair 3: She drinks coffee
+    createSentence({
+      id: 'food-3-short',
+      hebrew: 'היא שותה קפה.',
+      english: 'She drinks coffee.',
+      pattern: 'She drinks coffee.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['present tense']
     }),
     createSentence({
       id: 'food-3',
       hebrew: 'היא אוהבת לשתות קפה בבוקר',
       english: 'She loves to drink coffee in the morning.',
+      pattern: 'She loves to drink coffee in the morning.',
       theme: 'Food & Eating',
       difficulty: 2,
       grammarPoints: ['verb + infinitive', 'time phrases']
+    }),
+
+    // Pair 4: Food is very tasty
+    createSentence({
+      id: 'food-4-short',
+      hebrew: 'האוכל טעים מאוד.',
+      english: 'The food is very tasty.',
+      pattern: 'The food is very tasty.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['copula', 'intensifiers']
     }),
     createSentence({
       id: 'food-4',
       hebrew: 'האוכל במסעדה טעים מאוד.',
       english: 'The food at the restaurant is very tasty.',
+      pattern: 'The food at the restaurant is very tasty.',
       theme: 'Food & Eating',
       difficulty: 3,
       grammarPoints: ['copula', 'intensifiers']
+    }),
+
+    // Pair 5: We buy bread
+    createSentence({
+      id: 'food-5-short',
+      hebrew: 'אנחנו קונים לחם.',
+      english: 'We are buying bread.',
+      pattern: "{We are buying, We're buying, We buy} bread.",
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['present tense']
     }),
     createSentence({
       id: 'food-5',
       hebrew: 'אנחנו קונים לחם טרי היום.',
       english: 'We are buying fresh bread today.',
+      pattern: "{We are buying, We're buying, We buy} fresh bread today.",
       theme: 'Food & Eating',
       difficulty: 2,
       grammarPoints: ['present progressive', 'adjectives']
+    }),
+
+    // Pair 6: I pay for food
+    createSentence({
+      id: 'food-6-short',
+      hebrew: 'אני משלם על אוכל.',
+      english: 'I pay for food.',
+      pattern: 'I pay for food.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['prepositions']
     }),
     createSentence({
       id: 'food-6',
       hebrew: 'אני משלם על אוכל ושותה מים',
       english: 'I pay for food and drink water.',
+      pattern: 'I pay for food and drink water.',
       theme: 'Food & Eating',
       difficulty: 3,
       grammarPoints: ['prepositions', 'coordinating verbs']
+    }),
+
+    // Pair 7: He cooks at home
+    createSentence({
+      id: 'food-7-short',
+      hebrew: 'הוא מבשל בבית.',
+      english: 'He cooks at home.',
+      pattern: 'He cooks at home.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['present tense', 'location']
     }),
     createSentence({
       id: 'food-7',
       hebrew: 'הוא מבשל בבית עם המשפחה.',
       english: 'He cooks at home with the family.',
+      pattern: 'He cooks at home with the family.',
       theme: 'Food & Eating',
       difficulty: 2,
       grammarPoints: ['location phrases', 'prepositions']
+    }),
+
+    // Pair 8: I want water
+    createSentence({
+      id: 'food-8-short',
+      hebrew: 'אני רוצה מים.',
+      english: 'I want water.',
+      pattern: 'I want water.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['want statements']
     }),
     createSentence({
       id: 'food-8',
       hebrew: 'אני רוצה עוד מים בבקשה',
       english: 'I want more water, please.',
+      pattern: 'I want more water, please.',
       theme: 'Food & Eating',
       difficulty: 1,
       grammarPoints: ['politeness', 'quantifiers']
+    }),
+
+    // Pair 9: They order coffee
+    createSentence({
+      id: 'food-9-short',
+      hebrew: 'הם מזמינים קפה.',
+      english: 'They order coffee.',
+      pattern: 'They order coffee.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['present tense']
     }),
     createSentence({
       id: 'food-9',
       hebrew: 'הם מזמינים קפה נוסף כל ערב.',
       english: 'They order another coffee every evening.',
+      pattern: 'They order another coffee every evening.',
       theme: 'Food & Eating',
       difficulty: 3,
       grammarPoints: ['present tense', 'quantifiers']
+    }),
+
+    // Pair 10: We have an idea
+    createSentence({
+      id: 'food-10-short',
+      hebrew: 'יש לנו רעיון.',
+      english: 'We have an idea.',
+      pattern: 'We have an idea.',
+      theme: 'Food & Eating',
+      difficulty: 1,
+      grammarPoints: ['possession']
     }),
     createSentence({
       id: 'food-10',
       hebrew: 'יש לנו רעיון לארוחת ערב',
       english: 'We have an idea for dinner.',
+      pattern: 'We have an idea for dinner.',
       theme: 'Food & Eating',
       difficulty: 2,
       grammarPoints: ['possession', 'purpose phrase']
     })
   ],
   'Numbers & Time': [
+    // Pair 1: Today is good
+    createSentence({
+      id: 'time-1-short',
+      hebrew: 'היום יום טוב.',
+      english: 'Today is a good day.',
+      pattern: 'Today is a good day.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['copula', 'time reference']
+    }),
     createSentence({
       id: 'time-1',
       hebrew: 'היום יום טוב ושקט.',
       english: 'Today is a good and quiet day.',
+      pattern: 'Today is a good and quiet day.',
       theme: 'Numbers & Time',
       difficulty: 1,
       grammarPoints: ['copula', 'adjectives']
+    }),
+
+    // Pair 2: Tomorrow we are coming
+    createSentence({
+      id: 'time-2-short',
+      hebrew: 'מחר אנחנו באים.',
+      english: 'Tomorrow we are coming.',
+      pattern: 'Tomorrow we are coming.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['future reference', 'motion verb']
     }),
     createSentence({
       id: 'time-2',
       hebrew: 'מחר אנחנו באים לעיר מוקדם.',
       english: 'Tomorrow we are coming to the city early.',
+      pattern: 'Tomorrow we are coming to the city early.',
       theme: 'Numbers & Time',
       difficulty: 2,
       grammarPoints: ['future reference', 'motion verb']
+    }),
+
+    // Pair 3: Yesterday we waited
+    createSentence({
+      id: 'time-3-short',
+      hebrew: 'אתמול חיכינו הרבה.',
+      english: 'Yesterday we waited a lot.',
+      pattern: 'Yesterday we waited a lot.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['past reference']
     }),
     createSentence({
       id: 'time-3',
       hebrew: 'אתמול חיכינו הרבה זמן בתחנה.',
       english: 'Yesterday we waited a long time at the station.',
+      pattern: 'Yesterday we waited a long time at the station.',
       theme: 'Numbers & Time',
       difficulty: 2,
       grammarPoints: ['past reference', 'time duration']
+    }),
+
+    // Pair 4: Now I am going
+    createSentence({
+      id: 'time-4-short',
+      hebrew: 'עכשיו אני הולך.',
+      english: 'Now I am going.',
+      pattern: 'Now I am going.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['present progressive', 'time reference']
     }),
     createSentence({
       id: 'time-4',
       hebrew: 'עכשיו אני הולך לבית כדי לנוח.',
       english: 'Now I am going home to rest.',
+      pattern: 'Now I am going home to rest.',
       theme: 'Numbers & Time',
       difficulty: 2,
       grammarPoints: ['present progressive', 'direction']
+    }),
+
+    // Pair 5: We arrive early
+    createSentence({
+      id: 'time-5-short',
+      hebrew: 'אנחנו מגיעים מוקדם.',
+      english: 'We arrive early.',
+      pattern: 'We arrive early.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['motion verbs', 'time adverb']
     }),
     createSentence({
       id: 'time-5',
       hebrew: 'אנחנו מגיעים מוקדם בבוקר לפגישה.',
       english: 'We arrive early in the morning for a meeting.',
+      pattern: 'We arrive early in the morning for a meeting.',
       theme: 'Numbers & Time',
       difficulty: 2,
       grammarPoints: ['time phrases', 'motion verbs']
+    }),
+
+    // Pair 6: Meeting starts now
+    createSentence({
+      id: 'time-6-short',
+      hebrew: 'הפגישה מתחילה עכשיו.',
+      english: 'The meeting starts now.',
+      pattern: 'The meeting starts now.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['present tense', 'time reference']
     }),
     createSentence({
       id: 'time-6',
       hebrew: 'הפגישה מתחילה בשעה חמש',
       english: 'The meeting starts at five o\'clock.',
+      pattern: "The meeting starts at five o'clock.",
       theme: 'Numbers & Time',
       difficulty: 3,
       grammarPoints: ['clock time', 'present tense']
+    }),
+
+    // Pair 7: We finish late
+    createSentence({
+      id: 'time-7-short',
+      hebrew: 'אנחנו מסיימים מאוחר.',
+      english: 'We finish late.',
+      pattern: 'We finish late.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['present tense', 'time adverb']
     }),
     createSentence({
       id: 'time-7',
       hebrew: 'אנחנו מסיימים מאוחר בערב אחרי הספר.',
       english: 'We finish late in the evening after the book.',
+      pattern: 'We finish late in the evening after the book.',
       theme: 'Numbers & Time',
       difficulty: 2,
       grammarPoints: ['time phrases', 'adverbs']
+    }),
+
+    // Pair 8: I wait ten minutes
+    createSentence({
+      id: 'time-8-short',
+      hebrew: 'אני מחכה עשר דקות.',
+      english: 'I wait ten minutes.',
+      pattern: 'I wait ten minutes.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['numbers', 'time duration']
     }),
     createSentence({
       id: 'time-8',
       hebrew: 'אני מחכה עשר דקות ואתה בא',
       english: 'I wait ten minutes and you come.',
+      pattern: 'I wait ten minutes and you come.',
       theme: 'Numbers & Time',
       difficulty: 3,
       grammarPoints: ['numbers', 'coordinated clauses']
+    }),
+
+    // Pair 9: Time is short
+    createSentence({
+      id: 'time-9-short',
+      hebrew: 'לפעמים הזמן קצר.',
+      english: 'Sometimes time is short.',
+      pattern: 'Sometimes time is short.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['frequency adverb', 'copula']
     }),
     createSentence({
       id: 'time-9',
       hebrew: 'לפעמים הזמן קצר מדי לקרוא ספר.',
       english: 'Sometimes time is too short to read a book.',
+      pattern: 'Sometimes time is too short to read a book.',
       theme: 'Numbers & Time',
       difficulty: 2,
       grammarPoints: ['frequency adverb', 'adjectives']
+    }),
+
+    // Pair 10: We always have an hour
+    createSentence({
+      id: 'time-10-short',
+      hebrew: 'תמיד יש לנו שעה.',
+      english: 'We always have an hour.',
+      pattern: 'We always have an hour.',
+      theme: 'Numbers & Time',
+      difficulty: 1,
+      grammarPoints: ['frequency adverb', 'possession']
     }),
     createSentence({
       id: 'time-10',
       hebrew: 'תמיד יש לנו שעה לקרוא ספר יחד.',
       english: 'We always have an hour to read a book together.',
+      pattern: 'We always have an hour to read a book together.',
       theme: 'Numbers & Time',
       difficulty: 3,
       grammarPoints: ['frequency adverb', 'infinitive purpose']

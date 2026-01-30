@@ -742,8 +742,9 @@ export default function FloatingCapsulesGame({ wordPairs, onComplete }) {
           <div className="mt-6 space-y-2 text-sm">
             <p className="text-slate-400">Words learned:</p>
             {wordPairs.map((pair, i) => (
-              <div key={i} className="flex gap-4 justify-center items-center">
+              <div key={i} className="flex gap-3 justify-center items-center">
                 <span className="hebrew-font text-white" dir="rtl">{pair.hebrew}</span>
+                <span className="text-slate-400 text-xs">({pair.transliteration || pair.hebrew})</span>
                 <span className="text-slate-400">→</span>
                 <span className="text-white">{pair.meaning}</span>
               </div>
