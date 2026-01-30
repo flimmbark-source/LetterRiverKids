@@ -159,15 +159,23 @@ class TtsService {
    * MUST be synchronous to preserve user gesture on mobile
    */
   speakSmart({ nativeText, nativeLocale, transliteration, mode = 'word' }) {
+    console.log('[TTS] ========================================');
     console.log('[TTS] speakSmart called:', { nativeText, nativeLocale });
+    console.log('[TTS] User Agent:', navigator.userAgent);
+    console.log('[TTS] Is Mobile:', this.isMobile());
 
     // Get a FRESH reference to speechSynthesis each time
     const synth = this.getSynth();
 
     if (!synth) {
-      console.warn('[TTS] Speech synthesis not available');
+      console.error('[TTS] Speech synthesis not available - window.speechSynthesis is null/undefined');
       return;
     }
+
+    console.log('[TTS] speechSynthesis object exists');
+    console.log('[TTS] speechSynthesis.speaking:', synth.speaking);
+    console.log('[TTS] speechSynthesis.pending:', synth.pending);
+    console.log('[TTS] speechSynthesis.paused:', synth.paused);
 
     // Enforce minimum delay between utterances
     const now = Date.now();
@@ -210,35 +218,57 @@ class TtsService {
     // Get voices - if not loaded yet, use default voice
     // We can't wait for voices without breaking the user gesture
     const voices = synth.getVoices();
+    console.log('[TTS] Available voices count:', voices.length);
 
     if (voices.length === 0) {
-      console.log('[TTS] Voices not loaded yet, using default');
+      console.warn('[TTS] No voices loaded yet! Using browser default');
+    } else {
+      console.log('[TTS] First 5 voices:', voices.slice(0, 5).map(v => `${v.name} (${v.lang})`).join(', '));
     }
 
     // Find the best voice for this locale
     const voice = this.pickVoiceForLocale(locale, synth);
 
     if (voice) {
-      console.log('[TTS] Selected voice:', voice.name, '(', voice.lang, ')');
+      console.log('[TTS] ✓ Selected voice:', voice.name, '(', voice.lang, ')');
+      console.log('[TTS] Voice details:', {
+        name: voice.name,
+        lang: voice.lang,
+        localService: voice.localService,
+        default: voice.default
+      });
     } else {
-      console.log('[TTS] No specific voice found, using browser default for locale:', locale);
+      console.warn('[TTS] ⚠️ No specific voice found for locale:', locale);
+      console.warn('[TTS] Will use browser default voice');
     }
 
     // Create a fresh utterance
+    console.log('[TTS] Creating SpeechSynthesisUtterance...');
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    console.log('[TTS] ✓ Utterance created');
 
     if (voice) {
       utterance.voice = voice;
       utterance.lang = voice.lang;
-      console.log('[TTS] Using voice:', voice.name, 'with lang:', voice.lang);
+      console.log('[TTS] Set utterance.voice =', voice.name);
+      console.log('[TTS] Set utterance.lang =', voice.lang);
     } else {
       utterance.lang = locale;
-      console.log('[TTS] Using default voice with lang:', locale);
+      console.log('[TTS] Set utterance.lang =', locale, '(no specific voice)');
     }
 
     utterance.rate = mode === 'sentence' ? 0.9 : 0.85;
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
+
+    console.log('[TTS] Utterance settings:', {
+      text: textToSpeak.substring(0, 50),
+      lang: utterance.lang,
+      voice: utterance.voice?.name || 'default',
+      rate: utterance.rate,
+      pitch: utterance.pitch,
+      volume: utterance.volume
+    });
 
     // Track state
     this.currentUtterance = utterance;
@@ -246,11 +276,13 @@ class TtsService {
     let ended = false;
 
     // Set up event handlers
+    console.log('[TTS] Setting up utterance event handlers...');
+
     utterance.onstart = () => {
       started = true;
       this.isSpeaking = true;
       this.notifyListeners('start');
-      console.log('[TTS] ✓ Started speaking');
+      console.log('[TTS] ✅ EVENT: onstart - Audio started playing!');
     };
 
     utterance.onend = () => {
@@ -259,21 +291,53 @@ class TtsService {
       this.currentUtterance = null;
       this.notifyListeners('end');
       const duration = Date.now() - this.lastSpeakTime;
-      console.log('[TTS] ✓ Finished speaking (', duration, 'ms)');
+      console.log('[TTS] ✅ EVENT: onend - Finished speaking (', duration, 'ms)');
     };
 
     utterance.onerror = (event) => {
       ended = true;
       this.isSpeaking = false;
       this.currentUtterance = null;
-      console.error('[TTS] ✗ Error:', event.error);
+      console.error('[TTS] ❌ EVENT: onerror');
+      console.error('[TTS] Error type:', event.error);
+      console.error('[TTS] Error event:', event);
       this.notifyListeners('error', event.error);
     };
 
+    utterance.onpause = () => {
+      console.log('[TTS] EVENT: onpause');
+    };
+
+    utterance.onresume = () => {
+      console.log('[TTS] EVENT: onresume');
+    };
+
+    utterance.onmark = (event) => {
+      console.log('[TTS] EVENT: onmark', event);
+    };
+
+    utterance.onboundary = (event) => {
+      console.log('[TTS] EVENT: onboundary', event);
+    };
+
+    console.log('[TTS] ✓ Event handlers attached');
+
     // Speak the utterance
-    console.log('[TTS] Calling synth.speak()...');
-    synth.speak(utterance);
+    console.log('[TTS] >>> CALLING synth.speak() <<<');
+    console.log('[TTS] Time:', new Date().toISOString());
+
+    try {
+      synth.speak(utterance);
+      console.log('[TTS] ✓ synth.speak() returned without error');
+      console.log('[TTS] speechSynthesis.speaking after speak():', synth.speaking);
+      console.log('[TTS] speechSynthesis.pending after speak():', synth.pending);
+    } catch (error) {
+      console.error('[TTS] ❌ EXCEPTION calling synth.speak():', error);
+      console.error('[TTS] Exception stack:', error.stack);
+    }
+
     this.lastSpeakTime = Date.now();
+    console.log('[TTS] ========================================');
   }
 
   /**

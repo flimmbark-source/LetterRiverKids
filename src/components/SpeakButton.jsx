@@ -53,18 +53,27 @@ export default function SpeakButton({
 
   // Simple speak function
   const speak = useCallback(() => {
-    if (disabled || !nativeText) return;
+    console.log('[SpeakButton] speak() called');
+    console.log('[SpeakButton] disabled:', disabled, 'nativeText:', nativeText);
 
+    if (disabled || !nativeText) {
+      console.warn('[SpeakButton] Skipping speak - disabled or no text');
+      return;
+    }
+
+    console.log('[SpeakButton] Calling ttsService.speakSmart()...');
     ttsService.speakSmart({
       nativeText,
       nativeLocale,
       transliteration,
       mode: 'word',
     });
+    console.log('[SpeakButton] ttsService.speakSmart() returned');
   }, [nativeText, nativeLocale, transliteration, disabled]);
 
   // Handle click events
   const handleClick = useCallback((e) => {
+    console.log('[SpeakButton] Button clicked!');
     e.stopPropagation();
     speak();
   }, [speak]);
