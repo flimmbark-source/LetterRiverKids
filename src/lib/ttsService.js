@@ -2,6 +2,7 @@
  * TTS Service using Web Speech API
  *
  * Simple implementation that speaks native language text directly:
+ * - Actively loads voices on app start (mobile-friendly)
  * - Always creates fresh utterances to prevent stuck state
  * - Minimal state management to avoid corruption
  * - Delays between utterances to let the engine reset
@@ -14,44 +15,53 @@ class TtsService {
     this.listeners = new Set();
     this.isSpeaking = false;
     this.lastSpeakTime = 0;
-    this.voicesLoaded = false;
-    this.voiceLoadCallbacks = [];
+    this.voices = [];
 
-    // Initialize voice loading
-    this.initVoiceLoading();
+    // Actively load voices on startup
+    this.loadVoices();
   }
 
   /**
-   * Initialize voice loading - voices may load asynchronously
+   * Actively load voices by repeatedly calling getVoices()
+   * This is more reliable than waiting for onvoiceschanged on mobile
    */
-  initVoiceLoading() {
+  loadVoices() {
     const synth = this.getSynth();
     if (!synth) return;
 
-    // Check if voices are already available
-    const voices = synth.getVoices();
-    if (voices.length > 0) {
-      console.log('[TTS] Voices already loaded:', voices.length);
-      this.voicesLoaded = true;
+    // Try to get voices immediately
+    this.voices = synth.getVoices();
+    console.log('[TTS] Initial getVoices():', this.voices.length, 'voices');
+
+    // If no voices yet, keep trying for a few seconds
+    // Mobile browsers often need multiple attempts before voices populate
+    if (this.voices.length === 0) {
+      let attempts = 0;
+      const maxAttempts = 20; // Try for 2 seconds
+      const interval = setInterval(() => {
+        this.voices = synth.getVoices();
+        attempts++;
+
+        if (this.voices.length > 0) {
+          console.log('[TTS] Voices loaded after', attempts, 'attempts:', this.voices.length, 'voices');
+          this.logAvailableVoices();
+          clearInterval(interval);
+        } else if (attempts >= maxAttempts) {
+          console.warn('[TTS] No voices loaded after', maxAttempts, 'attempts - will use browser default');
+          clearInterval(interval);
+        }
+      }, 100);
+    } else {
       this.logAvailableVoices();
-      return;
     }
 
-    // Listen for voices to load
+    // Also set up onvoiceschanged as backup (works on some browsers)
     if ('onvoiceschanged' in synth) {
       synth.onvoiceschanged = () => {
-        const newVoices = synth.getVoices();
-        console.log('[TTS] Voices loaded:', newVoices.length);
-        this.voicesLoaded = true;
+        this.voices = synth.getVoices();
+        console.log('[TTS] onvoiceschanged fired:', this.voices.length, 'voices');
         this.logAvailableVoices();
-
-        // Notify any waiting callbacks
-        this.voiceLoadCallbacks.forEach(cb => cb());
-        this.voiceLoadCallbacks = [];
       };
-    } else {
-      // Fallback: assume voices are available immediately
-      this.voicesLoaded = true;
     }
   }
 
@@ -59,16 +69,12 @@ class TtsService {
    * Log available voices for debugging
    */
   logAvailableVoices() {
-    const synth = this.getSynth();
-    if (!synth) return;
-
-    const voices = synth.getVoices();
-    const hebrewVoices = voices.filter(v => {
+    const hebrewVoices = this.voices.filter(v => {
       const lang = v.lang.toLowerCase().replace(/^iw(\b|[-_])/i, 'he$1');
       return lang.startsWith('he');
     });
 
-    console.log('[TTS] Total voices available:', voices.length);
+    console.log('[TTS] Total voices available:', this.voices.length);
     console.log('[TTS] Hebrew voices:', hebrewVoices.length);
     if (hebrewVoices.length > 0) {
       console.log('[TTS] Hebrew voices:', hebrewVoices.map(v => `${v.name} (${v.lang})`).join(', '));
@@ -77,22 +83,9 @@ class TtsService {
 
   /**
    * Get a fresh reference to speechSynthesis
-   * Like creating a new Audio() object - prevents stuck state on mobile
    */
   getSynth() {
     return typeof window !== 'undefined' ? window.speechSynthesis : null;
-  }
-
-  /**
-   * Initialize the TTS service
-   */
-  initTts() {
-    const synth = this.getSynth();
-    if (!synth) {
-      console.warn('[TTS] Speech Synthesis not available');
-      return Promise.resolve();
-    }
-    return Promise.resolve();
   }
 
   /**
@@ -125,10 +118,10 @@ class TtsService {
   /**
    * Get the best voice for a locale
    */
-  pickVoiceForLocale(locale, synth) {
-    if (!synth || !locale) return null;
+  pickVoiceForLocale(locale) {
+    if (!locale) return null;
 
-    const voices = synth.getVoices();
+    const voices = this.voices;
     const normalizedLocale = locale.toLowerCase().replace(/^iw(\b|[-_])/i, 'he$1');
     const langCode = normalizedLocale.split('-')[0];
 
@@ -215,19 +208,17 @@ class TtsService {
 
     console.log('[TTS] Will speak:', textToSpeak, 'in locale:', locale);
 
-    // Get voices - if not loaded yet, use default voice
-    // We can't wait for voices without breaking the user gesture
-    const voices = synth.getVoices();
-    console.log('[TTS] Available voices count:', voices.length);
+    // Use pre-loaded voices
+    console.log('[TTS] Available voices count:', this.voices.length);
 
-    if (voices.length === 0) {
+    if (this.voices.length === 0) {
       console.warn('[TTS] No voices loaded yet! Using browser default');
     } else {
-      console.log('[TTS] First 5 voices:', voices.slice(0, 5).map(v => `${v.name} (${v.lang})`).join(', '));
+      console.log('[TTS] First 5 voices:', this.voices.slice(0, 5).map(v => `${v.name} (${v.lang})`).join(', '));
     }
 
     // Find the best voice for this locale
-    const voice = this.pickVoiceForLocale(locale, synth);
+    const voice = this.pickVoiceForLocale(locale);
 
     if (voice) {
       console.log('[TTS] ✓ Selected voice:', voice.name, '(', voice.lang, ')');
