@@ -207,7 +207,8 @@ class TtsService {
     // Enforce minimum delay between utterances
     const now = Date.now();
     const timeSinceLastSpeak = now - this.lastSpeakTime;
-    const minDelay = this.isMobile() ? 300 : 100;
+    const isMobileDevice = this.isMobile();
+    const minDelay = isMobileDevice ? 300 : 100;
 
     if (timeSinceLastSpeak < minDelay) {
       const waitTime = minDelay - timeSinceLastSpeak;
@@ -215,15 +216,16 @@ class TtsService {
       return;
     }
 
-    // Always cancel and clear state, but handle mobile differently
-    const isMobileDevice = this.isMobile();
-
-    // On mobile, be very conservative with cancel to avoid breaking the engine
+    // CRITICAL FOR MOBILE: On mobile, DO NOT call cancel() before the first speak()
+    // Calling cancel() or any other synth method breaks the user gesture chain
+    // Only call cancel() on desktop, or on mobile after audio is already unlocked and playing
     if (isMobileDevice) {
-      // Only cancel if actually speaking/pending
-      if (synth.speaking || synth.pending) {
+      // On mobile: only cancel if we're already speaking AND audio has been successfully unlocked before
+      if (this.audioUnlocked && this.lastSpeakTime > 0 && (synth.speaking || synth.pending)) {
         console.log('[TTS] [MOBILE] Canceling existing speech');
         synth.cancel();
+      } else {
+        console.log('[TTS] [MOBILE] Skipping cancel to preserve user gesture');
       }
       // Never call resume() on mobile - it can cause issues
     } else {
@@ -253,6 +255,14 @@ class TtsService {
     }
 
     console.log('[TTS] Will speak:', textToSpeak, 'in locale:', locale);
+
+    // CRITICAL: Re-fetch voices right before speaking to ensure they're fresh
+    // On some mobile browsers, voices can become stale or the engine needs a fresh getVoices() call
+    const freshVoices = synth.getVoices();
+    if (freshVoices.length > 0) {
+      this.voices = freshVoices;
+      console.log('[TTS] Refreshed voices - got', freshVoices.length, 'voices');
+    }
 
     // Use pre-loaded voices
     console.log('[TTS] Available voices count:', this.voices.length);
@@ -284,14 +294,25 @@ class TtsService {
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     console.log('[TTS] ✓ Utterance created');
 
-    if (voice) {
-      utterance.voice = voice;
-      utterance.lang = voice.lang;
-      console.log('[TTS] Set utterance.voice =', voice.name);
-      console.log('[TTS] Set utterance.lang =', voice.lang);
-    } else {
+    // CRITICAL FOR MOBILE: Setting utterance.voice can cause issues on some Android browsers
+    // On mobile, just set the lang and let the browser pick the voice
+    if (isMobileDevice) {
       utterance.lang = locale;
-      console.log('[TTS] Set utterance.lang =', locale, '(no specific voice)');
+      console.log('[TTS] [MOBILE] Set utterance.lang =', locale, '(letting browser choose voice)');
+      if (voice) {
+        console.log('[TTS] [MOBILE] Found voice but not setting it:', voice.name);
+      }
+    } else {
+      // On desktop, set the voice normally
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+        console.log('[TTS] Set utterance.voice =', voice.name);
+        console.log('[TTS] Set utterance.lang =', voice.lang);
+      } else {
+        utterance.lang = locale;
+        console.log('[TTS] Set utterance.lang =', locale, '(no specific voice)');
+      }
     }
 
     utterance.rate = mode === 'sentence' ? 0.9 : 0.85;
@@ -369,66 +390,73 @@ class TtsService {
       console.log('[TTS] speechSynthesis.speaking after speak():', synth.speaking);
       console.log('[TTS] speechSynthesis.pending after speak():', synth.pending);
 
-      // On mobile, immediately set speaking state and use polling for completion
-      // This is more reliable than waiting for events
+      // On mobile, use polling and optional retry for stuck speech
       if (isMobileDevice) {
         console.log('[TTS] Mobile device - using mobile-specific event handling');
 
-        // Check if onstart fires within 150ms, if not, cancel and retry
-        setTimeout(() => {
-          if (!started && !ended) {
-            console.warn('[TTS] ⚠️ onstart did not fire - speech may be stuck!');
-            console.log('[TTS] Attempting workaround: cancel and speak again');
+        // Only use retry mechanism if this isn't the very first speak attempt
+        // First speak needs to be completely synchronous to unlock audio
+        const isFirstSpeak = this.lastSpeakTime === 0;
 
-            // Cancel the stuck utterance
-            synth.cancel();
+        if (!isFirstSpeak) {
+          // Check if onstart fires within 150ms, if not, cancel and retry
+          setTimeout(() => {
+            if (!started && !ended) {
+              console.warn('[TTS] ⚠️ onstart did not fire - speech may be stuck!');
+              console.log('[TTS] Attempting workaround: cancel and speak again');
 
-            // Speak again immediately - still within reasonable time from user gesture
-            setTimeout(() => {
-              console.log('[TTS] Retrying speak with same utterance...');
-              const retry = new SpeechSynthesisUtterance(textToSpeak);
-              if (voice) {
-                retry.voice = voice;
-                retry.lang = voice.lang;
-              } else {
-                retry.lang = locale;
-              }
-              retry.rate = utterance.rate;
-              retry.pitch = utterance.pitch;
-              retry.volume = utterance.volume;
+              // Cancel the stuck utterance
+              synth.cancel();
 
-              // Set up minimal event handlers for retry
-              retry.onstart = () => {
-                console.log('[TTS] ✅ RETRY onstart fired!');
-                started = true;
-                this.isSpeaking = true;
-                this.notifyListeners('start');
-              };
+              // Speak again immediately
+              setTimeout(() => {
+                console.log('[TTS] Retrying speak with same utterance...');
+                const retry = new SpeechSynthesisUtterance(textToSpeak);
+                if (voice) {
+                  retry.voice = voice;
+                  retry.lang = voice.lang;
+                } else {
+                  retry.lang = locale;
+                }
+                retry.rate = utterance.rate;
+                retry.pitch = utterance.pitch;
+                retry.volume = utterance.volume;
 
-              retry.onend = () => {
-                console.log('[TTS] ✅ RETRY onend fired');
-                ended = true;
-                this.isSpeaking = false;
-                this.currentUtterance = null;
-                this.notifyListeners('end');
-              };
+                // Set up minimal event handlers for retry
+                retry.onstart = () => {
+                  console.log('[TTS] ✅ RETRY onstart fired!');
+                  started = true;
+                  this.isSpeaking = true;
+                  this.notifyListeners('start');
+                };
 
-              retry.onerror = (event) => {
-                console.error('[TTS] ❌ RETRY onerror:', event.error);
-                ended = true;
-                this.isSpeaking = false;
-                this.currentUtterance = null;
-                this.notifyListeners('error', event.error);
-              };
+                retry.onend = () => {
+                  console.log('[TTS] ✅ RETRY onend fired');
+                  ended = true;
+                  this.isSpeaking = false;
+                  this.currentUtterance = null;
+                  this.notifyListeners('end');
+                };
 
-              synth.speak(retry);
-              this.currentUtterance = retry;
-              console.log('[TTS] Retry speak() called');
-            }, 50);
-          } else {
-            console.log('[TTS] onstart fired successfully, no retry needed');
-          }
-        }, 150);
+                retry.onerror = (event) => {
+                  console.error('[TTS] ❌ RETRY onerror:', event.error);
+                  ended = true;
+                  this.isSpeaking = false;
+                  this.currentUtterance = null;
+                  this.notifyListeners('error', event.error);
+                };
+
+                synth.speak(retry);
+                this.currentUtterance = retry;
+                console.log('[TTS] Retry speak() called');
+              }, 50);
+            } else {
+              console.log('[TTS] onstart fired successfully, no retry needed');
+            }
+          }, 150);
+        } else {
+          console.log('[TTS] First speak - no retry mechanism, keeping it pure');
+        }
 
         // Force-trigger UI update earlier so button shows as speaking
         setTimeout(() => {
