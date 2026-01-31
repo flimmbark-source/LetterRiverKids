@@ -36,21 +36,40 @@ class TtsService {
       if (this.audioUnlocked) return;
 
       console.log('[TTS] Attempting to unlock audio...');
-      const synth = this.getSynth();
-      if (!synth) return;
 
-      // Speak a silent utterance to unlock audio
-      const silent = new SpeechSynthesisUtterance('');
-      silent.volume = 0;
-      silent.rate = 10; // Make it as fast as possible
+      // Use HTML5 Audio to unlock audio context (more reliable than silent speech)
+      // Create a tiny silent audio data URI
+      const silentAudio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA');
 
-      try {
-        synth.speak(silent);
-        this.audioUnlocked = true;
-        console.log('[TTS] Audio unlocked successfully');
-      } catch (e) {
-        console.warn('[TTS] Failed to unlock audio:', e);
+      // Play and immediately pause
+      const playPromise = silentAudio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            silentAudio.pause();
+            silentAudio.currentTime = 0;
+            console.log('[TTS] ✓ Audio unlocked successfully via HTML5 Audio');
+          })
+          .catch(e => {
+            console.warn('[TTS] Audio unlock failed:', e);
+          });
       }
+
+      // Also try to unlock speech synthesis
+      const synth = this.getSynth();
+      if (synth) {
+        try {
+          const silent = new SpeechSynthesisUtterance('');
+          silent.volume = 0;
+          silent.rate = 10;
+          synth.speak(silent);
+          console.log('[TTS] ✓ Speech synthesis unlocked');
+        } catch (e) {
+          console.warn('[TTS] Failed to unlock speech synthesis:', e);
+        }
+      }
+
+      this.audioUnlocked = true;
 
       // Remove listeners after first unlock attempt
       document.removeEventListener('touchstart', unlockAudio);
@@ -222,32 +241,24 @@ class TtsService {
       return;
     }
 
-    // On mobile, avoid cancel/resume before speaking as they break the user gesture chain
-    // Just clear our internal state and let speak() handle the rest
+    // Always cancel and clear state, but handle mobile differently
     const isMobileDevice = this.isMobile();
 
-    if (isMobileDevice) {
-      console.log('[TTS] Mobile device - skipping cancel/resume to preserve user gesture');
-      // Clear our state only
-      this.isSpeaking = false;
-      this.currentUtterance = null;
-    } else {
-      // On desktop, cancel existing speech if needed
-      if (synth.speaking || synth.pending) {
-        console.log('[TTS] Canceling existing speech');
-        synth.cancel();
-      }
-
-      // Only resume if actually paused
-      if (synth.paused) {
-        console.log('[TTS] Engine is paused, calling resume()');
-        synth.resume();
-      }
-
-      // Clear our state
-      this.isSpeaking = false;
-      this.currentUtterance = null;
+    // Cancel existing speech if needed
+    if (synth.speaking || synth.pending) {
+      console.log('[TTS] Canceling existing speech (speaking:', synth.speaking, 'pending:', synth.pending, ')');
+      synth.cancel();
     }
+
+    // Only resume if actually paused
+    if (synth.paused) {
+      console.log('[TTS] Engine is paused, calling resume()');
+      synth.resume();
+    }
+
+    // Clear our state
+    this.isSpeaking = false;
+    this.currentUtterance = null;
 
     // Use native text directly
     const textToSpeak = nativeText;
@@ -302,7 +313,7 @@ class TtsService {
 
     utterance.rate = mode === 'sentence' ? 0.9 : 0.85;
     utterance.pitch = 1.0;
-    utterance.volume = 1.0;
+    utterance.volume = 1.0; // Ensure maximum volume
 
     console.log('[TTS] Utterance settings:', {
       text: textToSpeak.substring(0, 50),
@@ -375,9 +386,48 @@ class TtsService {
       console.log('[TTS] speechSynthesis.speaking after speak():', synth.speaking);
       console.log('[TTS] speechSynthesis.pending after speak():', synth.pending);
 
-      // On mobile, if onstart doesn't fire within 200ms, manually trigger it
-      // This is a workaround for mobile browsers that don't fire events reliably
+      // On mobile, immediately set speaking state and use polling for completion
+      // This is more reliable than waiting for events
       if (isMobileDevice) {
+        console.log('[TTS] Mobile device - immediately setting speaking state');
+
+        // Immediately set speaking state (don't wait for onstart)
+        setTimeout(() => {
+          if (!started && !ended) {
+            console.log('[TTS] Force-triggering start state for mobile');
+            started = true;
+            this.isSpeaking = true;
+            this.notifyListeners('start');
+          }
+        }, 50);
+
+        // Poll for completion since events are unreliable on mobile
+        const pollInterval = setInterval(() => {
+          if (!synth.speaking && !synth.pending) {
+            console.log('[TTS] Polling detected speech ended');
+            clearInterval(pollInterval);
+            if (!ended) {
+              ended = true;
+              this.isSpeaking = false;
+              this.currentUtterance = null;
+              this.notifyListeners('end');
+            }
+          }
+        }, 100);
+
+        // Safety timeout to stop polling after 30 seconds
+        setTimeout(() => {
+          clearInterval(pollInterval);
+          if (this.isSpeaking && !ended) {
+            console.warn('[TTS] Safety timeout - forcing end state');
+            ended = true;
+            this.isSpeaking = false;
+            this.currentUtterance = null;
+            this.notifyListeners('end');
+          }
+        }, 30000);
+      } else {
+        // On desktop, use a shorter timeout for missing onstart
         setTimeout(() => {
           if (!started && !ended && synth.speaking) {
             console.log('[TTS] ⚠️ onstart not fired after 200ms, manually triggering');
