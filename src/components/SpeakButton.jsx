@@ -73,11 +73,31 @@ export default function SpeakButton({
   }, [nativeText, nativeLocale, transliteration, disabled]);
 
   // Handle click events
-  const handleClick = useCallback((e) => {
-    console.log('[SpeakButton] Button clicked!');
-    e.stopPropagation();
+  const handlePointerDown = useCallback((event) => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+    lastPointerDownAt.current = Date.now();
+    event.stopPropagation();
     speak();
   }, [speak]);
+
+  const handleTouchStart = useCallback((event) => {
+    if (Date.now() - lastPointerDownAt.current < 200) {
+      return;
+    }
+
+    lastPointerDownAt.current = Date.now();
+    event.stopPropagation();
+    speak();
+  }, [speak]);
+
+  // Handle click events (desktop + keyboard activation)
+  const handleClick = useCallback((event) => {
+    if (Date.now() - lastPointerDownAt.current < 700) {
+      return;
+    }
+
+    event.stopPropagation();
 
   // Button styles
   const baseStyles = `
