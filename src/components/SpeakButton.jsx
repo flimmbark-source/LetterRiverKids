@@ -5,9 +5,7 @@ import ttsService from '../lib/ttsService';
  * SpeakButton Component
  *
  * A button that triggers text-to-speech for the current word or sentence.
- * Uses Web Speech API with smart platform detection:
- * - Desktop: Uses native language voices for authentic pronunciation
- * - Mobile: Uses English transliteration for better reliability
+ * Uses Web Speech API to speak native language text directly.
  *
  * Props:
  * @param {string} nativeText - Text in native script (e.g., "שלום")
@@ -56,41 +54,28 @@ export default function SpeakButton({
 
   // Simple speak function
   const speak = useCallback(() => {
-    if (disabled || !nativeText) return;
+    console.log('[SpeakButton] speak() called');
+    console.log('[SpeakButton] disabled:', disabled, 'nativeText:', nativeText);
 
+    if (disabled || !nativeText) {
+      console.warn('[SpeakButton] Skipping speak - disabled or no text');
+      return;
+    }
+
+    console.log('[SpeakButton] Calling ttsService.speakSmart()...');
     ttsService.speakSmart({
       nativeText,
       nativeLocale,
       transliteration,
       mode: 'word',
     });
+    console.log('[SpeakButton] ttsService.speakSmart() returned');
   }, [nativeText, nativeLocale, transliteration, disabled]);
 
-  const handlePointerDown = useCallback((event) => {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
-
-    lastPointerDownAt.current = Date.now();
-    event.stopPropagation();
-    speak();
-  }, [speak]);
-
-  const handleTouchStart = useCallback((event) => {
-    if (Date.now() - lastPointerDownAt.current < 200) {
-      return;
-    }
-
-    lastPointerDownAt.current = Date.now();
-    event.stopPropagation();
-    speak();
-  }, [speak]);
-
-  // Handle click events (desktop + keyboard activation)
-  const handleClick = useCallback((event) => {
-    if (Date.now() - lastPointerDownAt.current < 700) {
-      return;
-    }
-
-    event.stopPropagation();
+  // Handle click events
+  const handleClick = useCallback((e) => {
+    console.log('[SpeakButton] Button clicked!');
+    e.stopPropagation();
     speak();
   }, [speak]);
 
