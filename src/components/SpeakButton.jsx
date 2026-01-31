@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import ttsService from '../lib/ttsService';
 
 /**
@@ -28,6 +28,7 @@ export default function SpeakButton({
   disabled = false,
 }) {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const lastPointerDownAt = useRef(0);
 
   // Subscribe to TTS events
   useEffect(() => {
@@ -100,6 +101,8 @@ export default function SpeakButton({
   return (
     <button
       onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onTouchStart={handleTouchStart}
       disabled={disabled}
       className={`${baseStyles} ${sizeStyles} ${speakingStyles} ${className}`}
       style={{
