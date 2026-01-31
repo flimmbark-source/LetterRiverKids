@@ -101,8 +101,6 @@ export default function SpeakButton({
   return (
     <button
       onClick={handleClick}
-      onPointerDown={handlePointerDown}
-      onTouchStart={handleTouchStart}
       disabled={disabled}
       className={`${baseStyles} ${sizeStyles} ${speakingStyles} ${className}`}
       style={{
