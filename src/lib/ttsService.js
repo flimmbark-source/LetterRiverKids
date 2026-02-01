@@ -464,28 +464,36 @@ class TtsService {
         setTimeout(() => {
           if (!started && !ended && synth.speaking) {
             console.log('[TTS] Force-triggering UI update');
+            started = true; // Mark as started to prevent polling from interfering
             this.isSpeaking = true;
             this.notifyListeners('start');
           }
         }, 50);
 
         // Poll for completion since events are unreliable on mobile
-        const pollInterval = setInterval(() => {
-          if (!synth.speaking && !synth.pending) {
-            console.log('[TTS] Polling detected speech ended');
-            clearInterval(pollInterval);
-            if (!ended) {
-              ended = true;
-              this.isSpeaking = false;
-              this.currentUtterance = null;
-              this.notifyListeners('end');
+        // BUT: Wait 300ms before starting to poll, to give onstart time to fire
+        // This prevents polling from prematurely detecting "speech ended" before it even starts
+        let pollInterval = null;
+        setTimeout(() => {
+          pollInterval = setInterval(() => {
+            if (!synth.speaking && !synth.pending) {
+              console.log('[TTS] Polling detected speech ended');
+              clearInterval(pollInterval);
+              if (!ended) {
+                ended = true;
+                this.isSpeaking = false;
+                this.currentUtterance = null;
+                this.notifyListeners('end');
+              }
             }
-          }
-        }, 100);
+          }, 100);
+        }, 300); // Wait 300ms before starting to poll
 
         // Safety timeout to stop polling after 30 seconds
         setTimeout(() => {
-          clearInterval(pollInterval);
+          if (pollInterval) {
+            clearInterval(pollInterval);
+          }
           if (this.isSpeaking && !ended) {
             console.warn('[TTS] Safety timeout - forcing end state');
             ended = true;
