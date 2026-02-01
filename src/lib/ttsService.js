@@ -17,6 +17,7 @@ class TtsService {
     this.lastSpeakTime = 0;
     this.voices = [];
     this.audioUnlocked = false;
+    this.hasSuccessfullySpoken = false; // Track if we've ever heard onstart event
 
     // Actively load voices on startup
     this.loadVoices();
@@ -339,6 +340,7 @@ class TtsService {
     utterance.onstart = () => {
       started = true;
       this.isSpeaking = true;
+      this.hasSuccessfullySpoken = true; // Mark that we've successfully played audio
       this.notifyListeners('start');
       console.log('[TTS] ✅ EVENT: onstart - Audio started playing!');
     };
@@ -394,11 +396,10 @@ class TtsService {
       if (isMobileDevice) {
         console.log('[TTS] Mobile device - using mobile-specific event handling');
 
-        // Only use retry mechanism if this isn't the very first speak attempt
-        // First speak needs to be completely synchronous to unlock audio
-        const isFirstSpeak = this.lastSpeakTime === 0;
-
-        if (!isFirstSpeak) {
+        // Only use retry mechanism if we've successfully spoken before
+        // First speak (globally) needs to be pure to unlock audio
+        // After that, only retry if we've confirmed audio works (onstart fired at least once)
+        if (this.hasSuccessfullySpoken) {
           // Check if onstart fires within 150ms, if not, cancel and retry
           setTimeout(() => {
             if (!started && !ended) {
@@ -412,12 +413,12 @@ class TtsService {
               setTimeout(() => {
                 console.log('[TTS] Retrying speak with same utterance...');
                 const retry = new SpeechSynthesisUtterance(textToSpeak);
-                if (voice) {
-                  retry.voice = voice;
-                  retry.lang = voice.lang;
-                } else {
-                  retry.lang = locale;
-                }
+
+                // CRITICAL: On mobile, never set voice object, even in retry
+                // Just set lang and let browser choose
+                retry.lang = locale;
+                console.log('[TTS] [RETRY] Set retry.lang =', locale);
+
                 retry.rate = utterance.rate;
                 retry.pitch = utterance.pitch;
                 retry.volume = utterance.volume;
@@ -427,6 +428,7 @@ class TtsService {
                   console.log('[TTS] ✅ RETRY onstart fired!');
                   started = true;
                   this.isSpeaking = true;
+                  this.hasSuccessfullySpoken = true;
                   this.notifyListeners('start');
                 };
 
@@ -455,7 +457,7 @@ class TtsService {
             }
           }, 150);
         } else {
-          console.log('[TTS] First speak - no retry mechanism, keeping it pure');
+          console.log('[TTS] Never successfully spoken before - no retry, keeping it pure');
         }
 
         // Force-trigger UI update earlier so button shows as speaking
