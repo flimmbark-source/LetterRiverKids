@@ -1,0 +1,587 @@
+diff --git a/src/App.jsx b/src/App.jsx
+index 1111111..2222222 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -18,6 +18,7 @@ import ErrorBoundary from './components/ErrorBoundary.jsx';
+ import OfflineIndicator from './components/OfflineIndicator.jsx';
+ import MigrationInitializer from './components/MigrationInitializer.jsx';
+ import PWAInstallPrompt from './components/PWAInstallPrompt.jsx';
++import KidsApp from './kids/KidsApp.jsx';
+ 
+ function LanguageOnboardingModal() {
+   const {
+@@ -207,6 +208,7 @@ function Shell() {
+           <Route path="/daily" element={<DailyView />} />
+           <Route path="/settings" element={<SettingsView />} />
+           <Route path="/play" element={<Navigate to="/home" replace />} />
++          <Route path="/kids/*" element={<KidsApp />} />
+         </Routes>
+       </main>
+       {!(isGameVisible && isGameRunning) && (
+diff --git a/src/lib/letters.js b/src/lib/letters.js
+new file mode 100644
+index 0000000..3333333
+--- /dev/null
++++ b/src/lib/letters.js
+@@ -0,0 +1,20 @@
++// letters.js
++// Curated starter set for kids mode. Later this should be generated
++// from your language packs and sound associations.
++
++export const letters = [
++  { id: 'A', display: 'A', sound: 'A', emoji: '🍎', word: 'Apple' },
++  { id: 'B', display: 'B', sound: 'B', emoji: '🐻', word: 'Bear' },
++  { id: 'C', display: 'C', sound: 'C', emoji: '🐱', word: 'Cat' },
++  { id: 'D', display: 'D', sound: 'D', emoji: '🦆', word: 'Duck' },
++  { id: 'E', display: 'E', sound: 'E', emoji: '🐘', word: 'Elephant' },
++  { id: 'F', display: 'F', sound: 'F', emoji: '🐟', word: 'Fish' },
++  { id: 'G', display: 'G', sound: 'G', emoji: '🦒', word: 'Giraffe' },
++  { id: 'H', display: 'H', sound: 'H', emoji: '🏠', word: 'House' },
++  { id: 'I', display: 'I', sound: 'I', emoji: '🧊', word: 'Ice' },
++  { id: 'J', display: 'J', sound: 'J', emoji: '🤹', word: 'Juggler' },
++];
++
++export default letters;
+diff --git a/src/kids/KidsApp.jsx b/src/kids/KidsApp.jsx
+new file mode 100644
+index 0000000..4444444
+--- /dev/null
++++ b/src/kids/KidsApp.jsx
+@@ -0,0 +1,34 @@
++import React from 'react';
++import { Routes, Route, Navigate } from 'react-router-dom';
++import GameKids from './GameKids.jsx';
++import SettingsKids from './SettingsKids.jsx';
++import RewardArea from './RewardArea.jsx';
++import ProfileSetup from './ProfileSetup.jsx';
++import ParentDashboard from './ParentDashboard.jsx';
++import { KidsProgressProvider } from './context/KidsProgressContext.jsx';
++import { StickerRewardProvider } from './context/StickerRewardContext.jsx';
++import { letters } from '../lib/letters.js';
++
++export default function KidsApp() {
++  const stickerIds = letters.map((l) => l.emoji);
++
++  return (
++    <KidsProgressProvider allItems={letters.map((l) => l.id)}>
++      <StickerRewardProvider availableStickers={stickerIds}>
++        <Routes>
++          <Route path="profile-setup" element={<ProfileSetup />} />
++          <Route index element={<GameKids />} />
++          <Route path="settings" element={<SettingsKids />} />
++          <Route path="rewards" element={<RewardArea />} />
++          <Route path="dashboard" element={<ParentDashboard />} />
++          <Route path="*" element={<Navigate to="." replace />} />
++        </Routes>
++      </StickerRewardProvider>
++    </KidsProgressProvider>
++  );
++}
+diff --git a/src/kids/GameKids.jsx b/src/kids/GameKids.jsx
+new file mode 100644
+index 0000000..5555555
+--- /dev/null
++++ b/src/kids/GameKids.jsx
+@@ -0,0 +1,102 @@
++import React, { useEffect, useState, useCallback } from 'react';
++import ttsService from '../lib/ttsService.js';
++import { useKidsProgress } from './context/KidsProgressContext.jsx';
++import { useStickerRewards } from './context/StickerRewardContext.jsx';
++import { letters } from '../lib/letters.js';
++
++export default function GameKids() {
++  const { dueItems, recordResult } = useKidsProgress();
++  const { unlockSticker } = useStickerRewards();
++  const [currentId, setCurrentId] = useState(null);
++  const [options, setOptions] = useState([]);
++  const [showResult, setShowResult] = useState(null);
++
++  const selectNext = useCallback(() => {
++    const allIds = letters.map((l) => l.id);
++    const due = dueItems(allIds);
++    const next =
++      due.length > 0 ? due[0] : allIds[Math.floor(Math.random() * allIds.length)];
++
++    setCurrentId(next);
++    const others = allIds.filter((id) => id !== next).sort(() => 0.5 - Math.random());
++    const picks = [next, others[0], others[1]].sort(() => 0.5 - Math.random());
++    setOptions(picks);
++    setShowResult(null);
++  }, [dueItems]);
++
++  useEffect(() => {
++    selectNext();
++  }, [selectNext]);
++
++  useEffect(() => {
++    if (!currentId) return;
++    const letter = letters.find((l) => l.id === currentId);
++    if (!letter) return;
++    ttsService.speakSmart({
++      nativeText: letter.sound,
++      nativeLocale: 'en-US',
++      transliteration: letter.sound,
++    });
++  }, [currentId]);
++
++  const handleSelect = (choiceId) => {
++    const correct = choiceId === currentId;
++    recordResult(currentId, correct);
++    setShowResult(correct ? 'correct' : 'incorrect');
++    if (correct) unlockSticker();
++    setTimeout(() => selectNext(), 900);
++  };
++
++  if (!currentId) return null;
++  const currentLetter = letters.find((l) => l.id === currentId);
++
++  return (
++    <div className="flex flex-col items-center justify-center p-4 gap-4">
++      <h1 className="text-2xl font-extrabold">Letter River Kids</h1>
++      <div className="text-6xl" aria-label="target-letter">
++        {currentLetter.display}
++      </div>
++
++      <button
++        type="button"
++        onClick={() =>
++          ttsService.speakSmart({
++            nativeText: currentLetter.sound,
++            nativeLocale: 'en-US',
++            transliteration: currentLetter.sound,
++          })
++        }
++        className="rounded-xl px-4 py-2 bg-blue-100 border border-blue-300 font-semibold"
++      >
++        🔊 Hear it again
++      </button>
++
++      <div className="grid grid-cols-3 gap-4">
++        {options.map((id) => {
++          const letter = letters.find((l) => l.id === id);
++          return (
++            <button
++              key={id}
++              onClick={() => handleSelect(id)}
++              className="flex flex-col items-center justify-center p-4 rounded-xl border-4 border-blue-200 bg-blue-50 text-4xl shadow-lg"
++              style={{ minWidth: '80px', minHeight: '80px' }}
++              aria-label={letter.word}
++            >
++              <span role="img" aria-label={letter.word}>
++                {letter.emoji}
++              </span>
++            </button>
++          );
++        })}
++      </div>
++
++      {showResult && (
++        <div className={`text-xl font-bold ${showResult === 'correct' ? 'text-green-600' : 'text-red-600'}`}>
++          {showResult === 'correct' ? '✅ Great job!' : '❌ Try again!'}
++        </div>
++      )}
++    </div>
++  );
++}
+diff --git a/src/kids/SettingsKids.jsx b/src/kids/SettingsKids.jsx
+new file mode 100644
+index 0000000..6666666
+--- /dev/null
++++ b/src/kids/SettingsKids.jsx
+@@ -0,0 +1,103 @@
++import React, { useEffect, useState } from 'react';
++
++export default function SettingsKids() {
++  const [settings, setSettings] = useState(() => {
++    try {
++      const json = window.localStorage.getItem('kidsSettings');
++      return json
++        ? JSON.parse(json)
++        : {
++            age: 4,
++            highContrast: false,
++            clickMode: true,
++            slowMode: false,
++            reducedMotion: false,
++            breakMinutes: 10,
++          };
++    } catch {
++      return {
++        age: 4,
++        highContrast: false,
++        clickMode: true,
++        slowMode: false,
++        reducedMotion: false,
++        breakMinutes: 10,
++      };
++    }
++  });
++
++  useEffect(() => {
++    window.localStorage.setItem('kidsSettings', JSON.stringify(settings));
++  }, [settings]);
++
++  const handleChange = (e) => {
++    const { name, value, type, checked } = e.target;
++    setSettings((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
++  };
++
++  return (
++    <div className="max-w-lg mx-auto p-4 space-y-4">
++      <h1 className="text-2xl font-bold">Parent Settings</h1>
++
++      <label className="flex flex-col gap-1">
++        <span className="font-semibold">Child age</span>
++        <input type="number" name="age" min="3" max="7" value={settings.age} onChange={handleChange} className="border rounded p-2" />
++      </label>
++
++      <label className="flex items-center gap-2">
++        <input type="checkbox" name="highContrast" checked={settings.highContrast} onChange={handleChange} />
++        <span>High contrast mode</span>
++      </label>
++
++      <label className="flex items-center gap-2">
++        <input type="checkbox" name="clickMode" checked={settings.clickMode} onChange={handleChange} />
++        <span>Click instead of drag</span>
++      </label>
++
++      <label className="flex items-center gap-2">
++        <input type="checkbox" name="slowMode" checked={settings.slowMode} onChange={handleChange} />
++        <span>Slow river mode</span>
++      </label>
++
++      <label className="flex items-center gap-2">
++        <input type="checkbox" name="reducedMotion" checked={settings.reducedMotion} onChange={handleChange} />
++        <span>Reduced motion</span>
++      </label>
++
++      <label className="flex flex-col gap-1">
++        <span className="font-semibold">Break reminder (minutes)</span>
++        <input
++          type="number"
++          name="breakMinutes"
++          min="5"
++          max="60"
++          value={settings.breakMinutes}
++          onChange={handleChange}
++          className="border rounded p-2"
++        />
++      </label>
++    </div>
++  );
++}
+diff --git a/src/kids/RewardArea.jsx b/src/kids/RewardArea.jsx
+new file mode 100644
+index 0000000..7777777
+--- /dev/null
++++ b/src/kids/RewardArea.jsx
+@@ -0,0 +1,30 @@
++import React from 'react';
++import { useStickerRewards } from './context/StickerRewardContext.jsx';
++
++export default function RewardArea() {
++  const { unlocked } = useStickerRewards();
++
++  return (
++    <div className="p-4">
++      <h1 className="text-2xl font-bold mb-4">Your Collection</h1>
++      {unlocked.length === 0 ? (
++        <p>You haven’t unlocked any stickers yet. Keep practicing!</p>
++      ) : (
++        <div className="grid grid-cols-5 gap-4">
++          {unlocked.map((sticker) => (
++            <div
++              key={sticker}
++              className="flex items-center justify-center text-4xl border border-gray-300 rounded-lg p-3 bg-white shadow"
++            >
++              {sticker}
++            </div>
++          ))}
++        </div>
++      )}
++    </div>
++  );
++}
+diff --git a/src/kids/ProfileSetup.jsx b/src/kids/ProfileSetup.jsx
+new file mode 100644
+index 0000000..8888888
+--- /dev/null
++++ b/src/kids/ProfileSetup.jsx
+@@ -0,0 +1,51 @@
++import React, { useState } from 'react';
++import { useNavigate } from 'react-router-dom';
++
++export default function ProfileSetup() {
++  const [age, setAge] = useState(4);
++  const [track, setTrack] = useState('explorer');
++  const navigate = useNavigate();
++
++  const handleSubmit = (e) => {
++    e.preventDefault();
++    window.localStorage.setItem('kidsProfile', JSON.stringify({ age: Number(age), track }));
++    navigate('/kids');
++  };
++
++  return (
++    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 space-y-4">
++      <h1 className="text-2xl font-bold">Set up your child’s profile</h1>
++
++      <label className="flex flex-col gap-1">
++        <span className="font-semibold">Child age</span>
++        <input
++          type="number"
++          min="3"
++          max="7"
++          value={age}
++          onChange={(e) => setAge(e.target.value)}
++          className="border rounded p-2"
++        />
++      </label>
++
++      <label className="flex flex-col gap-1">
++        <span className="font-semibold">Choose a track</span>
++        <select value={track} onChange={(e) => setTrack(e.target.value)} className="border rounded p-2">
++          <option value="explorer">Explorer (ages 3–5)</option>
++          <option value="builder">Builder (ages 5–7)</option>
++        </select>
++      </label>
++
++      <button type="submit" className="w-full bg-blue-500 text-white rounded p-2 font-semibold">
++        Continue
++      </button>
++    </form>
++  );
++}
+diff --git a/src/kids/ParentDashboard.jsx b/src/kids/ParentDashboard.jsx
+new file mode 100644
+index 0000000..9999999
+--- /dev/null
++++ b/src/kids/ParentDashboard.jsx
+@@ -0,0 +1,61 @@
++import React from 'react';
++import { useKidsProgress } from './context/KidsProgressContext.jsx';
++import { letters } from '../lib/letters.js';
++
++export default function ParentDashboard() {
++  const { stats, dueItems } = useKidsProgress();
++  const upcoming = dueItems(letters.map((l) => l.id)).slice(0, 5);
++
++  return (
++    <div className="p-4 max-w-xl mx-auto space-y-4">
++      <h1 className="text-2xl font-bold">Progress Summary</h1>
++
++      <table className="w-full border-collapse">
++        <thead>
++          <tr>
++            <th className="border px-2 py-1 text-left">Letter</th>
++            <th className="border px-2 py-1">Attempts</th>
++            <th className="border px-2 py-1">Correct</th>
++            <th className="border px-2 py-1">Mastered?</th>
++          </tr>
++        </thead>
++        <tbody>
++          {letters.map((l) => {
++            const s = stats[l.id] || { attempts: 0, successes: 0 };
++            const mastered = s.successes >= 3;
++            return (
++              <tr key={l.id} className={mastered ? 'bg-green-50' : ''}>
++                <td className="border px-2 py-1 font-semibold">{l.display}</td>
++                <td className="border px-2 py-1 text-center">{s.attempts}</td>
++                <td className="border px-2 py-1 text-center">{s.successes}</td>
++                <td className="border px-2 py-1 text-center">{mastered ? '✓' : ''}</td>
++              </tr>
++            );
++          })}
++        </tbody>
++      </table>
++
++      <div>
++        <h2 className="text-xl font-semibold mt-4">Upcoming Reviews</h2>
++        {upcoming.length === 0 ? (
++          <p>All caught up! Keep playing to practice more letters.</p>
++        ) : (
++          <ul className="list-disc pl-6">
++            {upcoming.map((id) => (
++              <li key={id}>{id}</li>
++            ))}
++          </ul>
++        )}
++      </div>
++    </div>
++  );
++}
+diff --git a/src/kids/context/AdaptiveScheduler.js b/src/kids/context/AdaptiveScheduler.js
+new file mode 100644
+index 0000000..aaaaaaa
+--- /dev/null
++++ b/src/kids/context/AdaptiveScheduler.js
+@@ -0,0 +1,63 @@
++export class AdaptiveScheduler {
++  constructor(options = {}) {
++    const { initialIntervalHours = 1, maxIntervalDays = 14 } = options;
++    this.initialIntervalMs = initialIntervalHours * 60 * 60 * 1000;
++    this.maxIntervalMs = maxIntervalDays * 24 * 60 * 60 * 1000;
++    this.items = {};
++  }
++
++  recordResult(itemId, correct) {
++    const now = Date.now();
++    if (!this.items[itemId]) {
++      this.items[itemId] = {
++        intervalMs: this.initialIntervalMs,
++        due: now + this.initialIntervalMs,
++        lastCorrect: correct,
++      };
++      return;
++    }
++
++    const record = this.items[itemId];
++    record.intervalMs = correct
++      ? Math.min(record.intervalMs * 2, this.maxIntervalMs)
++      : this.initialIntervalMs;
++    record.lastCorrect = correct;
++    record.due = now + record.intervalMs;
++  }
++
++  getDueItems(allItemIds) {
++    const now = Date.now();
++    return allItemIds
++      .filter((id) => !this.items[id] || this.items[id].due <= now)
++      .sort((a, b) => (this.items[a]?.due ?? 0) - (this.items[b]?.due ?? 0));
++  }
++
++  serialize() {
++    return JSON.stringify({ items: this.items });
++  }
++
++  static deserialize(json, options = {}) {
++    try {
++      const data = JSON.parse(json);
++      const scheduler = new AdaptiveScheduler(options);
++      scheduler.items = data.items || {};
++      return scheduler;
++    } catch {
++      return new AdaptiveScheduler(options);
++    }
++  }
++}
++
++export default AdaptiveScheduler;
+diff --git a/src/kids/context/KidsProgressContext.jsx b/src/kids/context/KidsProgressContext.jsx
+new file mode 100644
+index 0000000..bbbbbbb
+--- /dev/null
++++ b/src/kids/context/KidsProgressContext.jsx
+@@ -0,0 +1,66 @@
++import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
++import AdaptiveScheduler from './AdaptiveScheduler.js';
++
++const KidsProgressContext = createContext(null);
++
++export function useKidsProgress() {
++  return useContext(KidsProgressContext);
++}
++
++export function KidsProgressProvider({ children, allItems }) {
++  const [scheduler, setScheduler] = useState(() => {
++    const saved = window.localStorage.getItem('kidsScheduler');
++    return AdaptiveScheduler.deserialize(saved || undefined);
++  });
++
++  const [stats, setStats] = useState(() => {
++    try {
++      const json = window.localStorage.getItem('kidsStats');
++      return json ? JSON.parse(json) : {};
++    } catch {
++      return {};
++    }
++  });
++
++  useEffect(() => {
++    window.localStorage.setItem('kidsScheduler', scheduler.serialize());
++  }, [scheduler]);
++
++  useEffect(() => {
++    window.localStorage.setItem('kidsStats', JSON.stringify(stats));
++  }, [stats]);
++
++  const recordResult = useCallback((itemId, correct) => {
++    setScheduler((prev) => {
++      const next = AdaptiveScheduler.deserialize(prev.serialize());
++      next.recordResult(itemId, correct);
++      return next;
++    });
++
++    setStats((prev) => {
++      const next = { ...prev };
++      if (!next[itemId]) next[itemId] = { attempts: 0, successes: 0 };
++      next[itemId].attempts += 1;
++      if (correct) next[itemId].successes += 1;
++      return next;
++    });
++  }, []);
++
++  const dueItems = useCallback(
++    (overrideItems) => scheduler.getDueItems(overrideItems || allItems || []),
++    [scheduler, allItems]
++  );
++
++  const resetProgress = useCallback(() => {
++    setScheduler(new AdaptiveScheduler());
++    setStats({});
++    window.localStorage.removeItem('kidsScheduler');
++    window.localStorage.removeItem('kidsStats');
++  }, []);
++
++  return (
++    <KidsProgressContext.Provider value={{ stats, dueItems, recordResult, resetProgress }}>
++      {children}
++    </KidsProgressContext.Provider>
++  );
++}
+diff --git a/src/kids/context/StickerRewardContext.jsx b/src/kids/context/StickerRewardContext.jsx
+new file mode 100644
+index 0000000..ccccccc
+--- /dev/null
++++ b/src/kids/context/StickerRewardContext.jsx
+@@ -0,0 +1,52 @@
++import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
++
++const StickerRewardContext = createContext(null);
++
++export function useStickerRewards() {
++  return useContext(StickerRewardContext);
++}
++
++export function StickerRewardProvider({ children, availableStickers }) {
++  const [unlocked, setUnlocked] = useState(() => {
++    try {
++      const json = window.localStorage.getItem('kidsStickers');
++      return json ? JSON.parse(json) : [];
++    } catch {
++      return [];
++    }
++  });
++
++  useEffect(() => {
++    window.localStorage.setItem('kidsStickers', JSON.stringify(unlocked));
++  }, [unlocked]);
++
++  const isUnlocked = useCallback((id) => unlocked.includes(id), [unlocked]);
++
++  const unlockSticker = useCallback(() => {
++    const remaining = availableStickers.filter((s) => !unlocked.includes(s));
++    if (remaining.length === 0) return null;
++    const id = remaining[Math.floor(Math.random() * remaining.length)];
++    setUnlocked((prev) => [...prev, id]);
++    return id;
++  }, [availableStickers, unlocked]);
++
++  const resetStickers = useCallback(() => setUnlocked([]), []);
++
++  return (
++    <StickerRewardContext.Provider value={{ unlocked, isUnlocked, unlockSticker, resetStickers }}>
++      {children}
++    </StickerRewardContext.Provider>
++  );
++}
