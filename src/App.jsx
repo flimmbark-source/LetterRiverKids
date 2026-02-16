@@ -17,6 +17,8 @@ import ErrorBoundary from './components/ErrorBoundary.jsx';
 import OfflineIndicator from './components/OfflineIndicator.jsx';
 import MigrationInitializer from './components/MigrationInitializer.jsx';
 import PWAInstallPrompt from './components/PWAInstallPrompt.jsx';
+import KidOnboarding from './components/KidOnboarding.jsx';
+import { useProgress } from './context/ProgressContext.jsx';
 
 function HomeIcon(props) {
   return (
@@ -236,9 +238,13 @@ function Shell() {
   const { openGame, closeGame, isVisible: isGameVisible, isGameRunning } = useGame();
   const { t, interfaceLanguagePack } = useLocalization();
   const { currentTutorial, currentStepIndex } = useTutorial();
+  const { player } = useProgress();
   const fontClass = interfaceLanguagePack.metadata?.fontClass ?? 'language-font-hebrew';
   const direction = interfaceLanguagePack.metadata?.textDirection ?? 'ltr';
   const [inConversationPractice, setInConversationPractice] = React.useState(false);
+
+  // Check if kid mode is enabled
+  const isKidMode = player.kidMode ?? true;
 
   // Check if we're in conversation practice mode
   React.useEffect(() => {
@@ -282,15 +288,16 @@ function Shell() {
   return (
     <div className="app-shell">
       <LanguageOnboardingModal />
+      <KidOnboarding />
       <OfflineIndicator />
       <PWAInstallPrompt />
       <main className="flex-1 main-content">
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomeView />} />
-          <Route path="/achievements" element={<AchievementsView />} />
-          <Route path="/read" element={<LearnView />} />
-          <Route path="/daily" element={<DailyView />} />
+          <Route path="/achievements" element={isKidMode ? <Navigate to="/home" replace /> : <AchievementsView />} />
+          <Route path="/read" element={isKidMode ? <Navigate to="/home" replace /> : <LearnView />} />
+          <Route path="/daily" element={isKidMode ? <Navigate to="/home" replace /> : <DailyView />} />
           <Route path="/settings" element={<SettingsView />} />
           <Route path="/play" element={<Navigate to="/home" replace />} />
         </Routes>
@@ -303,12 +310,14 @@ function Shell() {
             </div>
             <span className="label">{t('app.nav.home')}</span>
           </NavLink>
-          <NavLink to="/read" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleNavClick}>
-            <div className="nav-icon-shell">
-              <span>📚</span>
-            </div>
-            <span className="label">{t('app.nav.read')}</span>
-          </NavLink>
+          {!isKidMode && (
+            <NavLink to="/read" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleNavClick}>
+              <div className="nav-icon-shell">
+                <span>📚</span>
+              </div>
+              <span className="label">{t('app.nav.read')}</span>
+            </NavLink>
+          )}
           <button
             type="button"
             onClick={handlePlay}
@@ -320,12 +329,14 @@ function Shell() {
               <span>▶</span>
             </div>
           </button>
-          <NavLink to="/achievements" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleNavClick}>
-            <div className="nav-icon-shell">
-              <span>🏆</span>
-            </div>
-            <span className="label">{t('app.nav.achievements')}</span>
-          </NavLink>
+          {!isKidMode && (
+            <NavLink to="/achievements" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleNavClick}>
+              <div className="nav-icon-shell">
+                <span>🏆</span>
+              </div>
+              <span className="label">{t('app.nav.achievements')}</span>
+            </NavLink>
+          )}
           <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleNavClick}>
             <div className="nav-icon-shell">
               <span>⚙️</span>

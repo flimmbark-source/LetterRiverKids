@@ -1,10 +1,12 @@
 import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import badgesCatalog from '../data/badges.json';
+import kidRewards from '../data/kidRewards.json';
 import { useProgress, STAR_LEVEL_SIZE } from '../context/ProgressContext.jsx';
 import { useGame } from '../context/GameContext.jsx';
 import { useTutorial } from '../context/TutorialContext.jsx';
 import { useLocalization } from '../context/LocalizationContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import { useKidMode } from '../hooks/useKidMode.js';
 import { formatJerusalemTime, millisUntilNextJerusalemMidnight } from '../lib/time.js';
 import { getFormattedLanguageName } from '../lib/languageUtils.js';
 import { classNames } from '../lib/classNames.js';
@@ -73,6 +75,7 @@ function QuestCard({ task, onClaim, claimingTaskId, t }) {
 
 export default function HomeView() {
   const { player, streak, daily, starLevelSize, claimDailyReward } = useProgress();
+  const { isKidMode, kidSettings, ageBand, track } = useKidMode();
 
   const { openGame } = useGame();
   const { startTutorial, currentTutorial, currentStepIndex } = useTutorial();
@@ -290,104 +293,169 @@ export default function HomeView() {
       {/* Hero Card */}
       <section className="section" style={{ marginTop: '20px',  }}></section>
       <section className={classNames('hero-card', heroCardUpdate.isUpdated && 'card-updated')} style={{ position: 'relative' }}>
-        <h1 className="hero-title">{t('home.recentLetters.title')}</h1>
-        <div className="hero-body" style={{ display: 'flex', gap: '12px', fontSize: '24px', flexWrap: 'wrap' }}>
-          {recentLetters.map((letter, index) => (
-            <span
-              key={index}
-              className="hebrew-text"
+        {isKidMode ? (
+          <>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <div style={{ fontSize: '64px', marginBottom: '10px' }}>
+                {track === 'explorer' ? '🧒' : '👷'}
+              </div>
+              <h1 className="hero-title" style={{ fontSize: '32px', marginBottom: '10px' }}>
+                Ready to play?
+              </h1>
+              <p style={{ fontSize: '18px', color: '#6c3b14' }}>
+                Let's learn letters together!
+              </p>
+            </div>
+            <button
+              className="hero-cta"
+              onClick={() => !isPlayDisabled && openGame({ autostart: false })}
+              disabled={isPlayDisabled}
               style={{
-                cursor: 'pointer',
-                position: 'relative',
-                fontFamily: 'Heebo, sans-serif',
-                transition: 'transform 0.2s ease'
-              }}
-              onMouseEnter={() => setHoveredLetter(index)}
-              onMouseLeave={() => setHoveredLetter(null)}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'scale(1.15)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
+                fontSize: '28px',
+                padding: '20px 40px',
+                ...(isPlayDisabled ? { opacity: 0.5, cursor: 'not-allowed' } : {})
               }}
             >
-              {letter.symbol}
-              {hoveredLetter === index && (
-                <span className="letter-tooltip">
-                  {letter.name} ({letter.sound})
+              🎮 Start Playing!
+            </button>
+          </>
+        ) : (
+          <>
+            <h1 className="hero-title">{t('home.recentLetters.title')}</h1>
+            <div className="hero-body" style={{ display: 'flex', gap: '12px', fontSize: '24px', flexWrap: 'wrap' }}>
+              {recentLetters.map((letter, index) => (
+                <span
+                  key={index}
+                  className="hebrew-text"
+                  style={{
+                    cursor: 'pointer',
+                    position: 'relative',
+                    fontFamily: 'Heebo, sans-serif',
+                    transition: 'transform 0.2s ease'
+                  }}
+                  onMouseEnter={() => setHoveredLetter(index)}
+                  onMouseLeave={() => setHoveredLetter(null)}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.15)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
+                >
+                  {letter.symbol}
+                  {hoveredLetter === index && (
+                    <span className="letter-tooltip">
+                      {letter.name} ({letter.sound})
+                    </span>
+                  )}
                 </span>
-              )}
-            </span>
-          ))}
-        </div>
-        <button
-          className="hero-cta"
-          onClick={() => !isPlayDisabled && openGame({ autostart: false })}
-          disabled={isPlayDisabled}
-          style={isPlayDisabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-        >
-          {t('home.cta.play')}
-        </button>
+              ))}
+            </div>
+            <button
+              className="hero-cta"
+              onClick={() => !isPlayDisabled && openGame({ autostart: false })}
+              disabled={isPlayDisabled}
+              style={isPlayDisabled ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+            >
+              {t('home.cta.play')}
+            </button>
+          </>
+        )}
       </section>
 
       {/* Progress Section */}
-      <section className="section">
-        <section className="section" style={{ marginTop: '20px',  }}></section>
-        <div className="section-header">
-          <div className="section-title">
-            <div className="wood-header">{t('home.progress.heading')}</div>
-          </div>
-          <div className="section-link">{t('common.viewDetails')}</div>
-        </div>
-        <section className="section" style={{ marginTop: '5px',  }}></section>
-        <div className="progress-row">
-          <div className={classNames('progress-card-small', streakCardUpdate.isUpdated && 'card-updated')}>
-            <div className="progress-icon red">🔥</div>
-            <div className="progress-label">{t('home.progress.streak')}</div>
-            <div className="progress-value">{t('home.progress.days', { count: streak.current })}</div>
-            <div className="progress-sub">{t('home.progress.resetsAt', { time: nextResetTime })}</div>
-          </div>
-          <div className={classNames('progress-card-small', levelCardUpdate.isUpdated && 'card-updated')}>
-            <div className="progress-icon gold">★</div>
-            <div className="progress-label">{t('home.progress.starLevel')}</div>
-            <div className="progress-value">{t('home.progress.level', { level })}</div>
-            <div className="progress-bar-shell">
-              <div className="progress-bar-fill" style={{ width: `${starsProgress * 100}%` }}></div>
-            </div>
-            <div className="progress-sub">
-              {t('home.progress.toNextLevel', { current: formatNumber(levelProgress), total: formatNumber(starsPerLevel) })}
-            </div>
-          </div>
-          <div className={classNames('progress-card-small', badgeCardUpdate.isUpdated && 'card-updated')}>
-            <div className="progress-icon cyan">🏅</div>
-            <div className="progress-label">{t('home.progress.latestBadge')}</div>
-            <div className="progress-value">{latestBadge?.name || t('common.noneYet')}</div>
-            <div className="progress-sub">{latestBadge ? latestBadge.summary : t('home.progress.playToUnlock')}</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Daily Quests Section */}
-      <section className="section" style={{ marginTop: '20px',  }}></section>
-      {daily?.tasks && daily.tasks.length > 0 && (
+      {!isKidMode && (
         <section className="section">
+          <section className="section" style={{ marginTop: '20px',  }}></section>
           <div className="section-header">
             <div className="section-title">
-              <div className="wood-header">{t('home.dailyQuests.title')}</div>
+              <div className="wood-header">{t('home.progress.heading')}</div>
             </div>
-            <div className="section-link">{t('home.dailyQuests.resetsAt', { time: nextResetTime })}</div>
+            <div className="section-link">{t('common.viewDetails')}</div>
           </div>
           <section className="section" style={{ marginTop: '5px',  }}></section>
-          {daily.tasks.map((task) => (
-            <QuestCard
-              key={task.id}
-              task={task}
-              onClaim={handleDailyClaim}
-              claimingTaskId={claimingTaskId}
-              t={t}
-            />
-          ))}
+          <div className="progress-row">
+            <div className={classNames('progress-card-small', streakCardUpdate.isUpdated && 'card-updated')}>
+              <div className="progress-icon red">🔥</div>
+              <div className="progress-label">{t('home.progress.streak')}</div>
+              <div className="progress-value">{t('home.progress.days', { count: streak.current })}</div>
+              <div className="progress-sub">{t('home.progress.resetsAt', { time: nextResetTime })}</div>
+            </div>
+            <div className={classNames('progress-card-small', levelCardUpdate.isUpdated && 'card-updated')}>
+              <div className="progress-icon gold">★</div>
+              <div className="progress-label">{t('home.progress.starLevel')}</div>
+              <div className="progress-value">{t('home.progress.level', { level })}</div>
+              <div className="progress-bar-shell">
+                <div className="progress-bar-fill" style={{ width: `${starsProgress * 100}%` }}></div>
+              </div>
+              <div className="progress-sub">
+                {t('home.progress.toNextLevel', { current: formatNumber(levelProgress), total: formatNumber(starsPerLevel) })}
+              </div>
+            </div>
+            <div className={classNames('progress-card-small', badgeCardUpdate.isUpdated && 'card-updated')}>
+              <div className="progress-icon cyan">🏅</div>
+              <div className="progress-label">{t('home.progress.latestBadge')}</div>
+              <div className="progress-value">{latestBadge?.name || t('common.noneYet')}</div>
+              <div className="progress-sub">{latestBadge ? latestBadge.summary : t('home.progress.playToUnlock')}</div>
+            </div>
+          </div>
         </section>
+      )}
+
+      {/* Kid-Friendly Progress Section */}
+      {isKidMode && (
+        <section className="section">
+          <section className="section" style={{ marginTop: '20px',  }}></section>
+          <div className="section-header">
+            <div className="section-title">
+              <div className="wood-header">My Progress</div>
+            </div>
+          </div>
+          <section className="section" style={{ marginTop: '5px',  }}></section>
+          <div className="progress-row">
+            <div className={classNames('progress-card-small', levelCardUpdate.isUpdated && 'card-updated')} style={{ textAlign: 'center' }}>
+              <div className="progress-icon gold" style={{ fontSize: '48px' }}>⭐</div>
+              <div className="progress-label" style={{ fontSize: '18px', marginTop: '10px' }}>Stars Collected</div>
+              <div className="progress-value" style={{ fontSize: '32px', fontWeight: 'bold' }}>{formatNumber(totalStarsEarned)}</div>
+              <div className="progress-sub">Keep playing to earn more!</div>
+            </div>
+            {latestBadge && (
+              <div className={classNames('progress-card-small', badgeCardUpdate.isUpdated && 'card-updated')} style={{ textAlign: 'center' }}>
+                <div className="progress-icon cyan" style={{ fontSize: '48px' }}>🏅</div>
+                <div className="progress-label" style={{ fontSize: '18px', marginTop: '10px' }}>Latest Badge</div>
+                <div className="progress-value" style={{ fontSize: '24px' }}>{latestBadge.name}</div>
+                <div className="progress-sub">{latestBadge.label}</div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Daily Quests Section - Hidden in kid mode */}
+      {!isKidMode && (
+        <>
+          <section className="section" style={{ marginTop: '20px',  }}></section>
+          {daily?.tasks && daily.tasks.length > 0 && (
+            <section className="section">
+              <div className="section-header">
+                <div className="section-title">
+                  <div className="wood-header">{t('home.dailyQuests.title')}</div>
+                </div>
+                <div className="section-link">{t('home.dailyQuests.resetsAt', { time: nextResetTime })}</div>
+              </div>
+              <section className="section" style={{ marginTop: '5px',  }}></section>
+              {daily.tasks.map((task) => (
+                <QuestCard
+                  key={task.id}
+                  task={task}
+                  onClaim={handleDailyClaim}
+                  claimingTaskId={claimingTaskId}
+                  t={t}
+                />
+              ))}
+            </section>
+          )}
+        </>
       )}
     </>
   );

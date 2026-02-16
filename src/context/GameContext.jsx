@@ -11,6 +11,7 @@ import { createPortal } from 'react-dom';
 import { setupGame } from '../game/game.js';
 import { useLocalization } from './LocalizationContext.jsx';
 import { useTutorial } from './TutorialContext.jsx';
+import { useProgress } from './ProgressContext.jsx';
 import { ErrorBoundary } from '../ErrorBoundary.jsx';
 import { on } from '../lib/eventBus.js';
 import PostGameReview from '../components/PostGameReview.jsx';
@@ -29,8 +30,12 @@ export function GameProvider({ children }) {
   const shouldAutostartRef = useRef(false);
   const { languagePack, interfaceLanguagePack, t, dictionary } = useLocalization();
   const { pendingTutorial, startPendingTutorial, currentTutorial } = useTutorial();
+  const { player } = useProgress();
   const fontClass = languagePack.metadata?.fontClass ?? 'language-font-hebrew';
   const direction = interfaceLanguagePack.metadata?.textDirection ?? 'ltr';
+
+  // Check if kid mode is enabled
+  const isKidMode = player.kidMode ?? true;
 
   // Load settings from localStorage to display correct initial state
   const loadedSettings = useMemo(() => {
@@ -41,12 +46,39 @@ export function GameProvider({ children }) {
         if (parsed.gameFont === 'opendyslexic') {
           parsed.gameFont = 'lexend';
         }
+        // If kid mode, override with kid-friendly defaults
+        if (isKidMode) {
+          return {
+            ...parsed,
+            showIntroductions: true,
+            clickMode: true, // Enable tap mode for kids
+            associationMode: true, // Show emoji associations
+            slowRiver: true, // Give kids more time
+            gameSpeed: 14, // Slower speed for kids
+            reducedMotion: false // Kids enjoy animations
+          };
+        }
         return parsed;
       }
     } catch (error) {
       console.error('Failed to load game settings:', error);
     }
-    // Return defaults if no saved settings
+    // Return kid-friendly defaults if no saved settings and kid mode
+    if (isKidMode) {
+      return {
+        showIntroductions: true,
+        highContrast: false,
+        randomLetters: false,
+        reducedMotion: false,
+        gameSpeed: 14, // Slower for kids
+        gameFont: 'default',
+        fontShuffle: false,
+        slowRiver: true, // More time to think
+        clickMode: true, // Tap instead of drag
+        associationMode: true // Show pictures
+      };
+    }
+    // Standard defaults for non-kid mode
     return {
       showIntroductions: true,
       highContrast: false,
@@ -57,8 +89,9 @@ export function GameProvider({ children }) {
       fontShuffle: false,
       slowRiver: false,
       clickMode: false,
+      associationMode: false
     };
-  }, []);
+  }, [isKidMode]);
 
   useEffect(() => {
     setHasMounted(true);

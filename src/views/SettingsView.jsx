@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLocalization } from '../context/LocalizationContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import { useKidMode } from '../hooks/useKidMode.js';
 import { getFormattedLanguageName } from '../lib/languageUtils.js';
 
 export default function SettingsView() {
   const { t } = useLocalization();
   const { languageId, selectLanguage, appLanguageId, selectAppLanguage, languageOptions } = useLanguage();
+  const { isKidMode, kidSettings, updateKidSettings, ageBand, track, parentMode } = useKidMode();
 
   // Game accessibility settings - these mirror the game settings
   const [showIntroductions, setShowIntroductions] = useState(true);
@@ -240,6 +242,96 @@ const showInfo = (settingKey, event) => {
           </p>
         </div>
       </section>
+
+      {/* Kid Settings - Only show if in kid mode */}
+      {isKidMode && (
+        <section className="section" style={{ marginTop: '20px' }}>
+          <div className="section-header">
+            <div className="section-title">
+              <div className="wood-header">Kid Settings</div>
+            </div>
+          </div>
+
+          <div className="progress-card-small p-4">
+            <h3 className="mb-3 font-heading text-sm font-bold text-arcade-text-main">
+              Age Range
+            </h3>
+            <div className="flex gap-3">
+              <button
+                onClick={() => updateKidSettings({ ageBand: '4-6' })}
+                className={`flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
+                  ageBand === '4-6'
+                    ? 'bg-arcade-accent-blue text-white'
+                    : 'bg-arcade-panel-light text-arcade-text-main border-2 border-arcade-panel-border'
+                }`}
+              >
+                <div className="text-2xl mb-1">👶</div>
+                Ages 4-6
+              </button>
+              <button
+                onClick={() => updateKidSettings({ ageBand: '7-9' })}
+                className={`flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
+                  ageBand === '7-9'
+                    ? 'bg-arcade-accent-blue text-white'
+                    : 'bg-arcade-panel-light text-arcade-text-main border-2 border-arcade-panel-border'
+                }`}
+              >
+                <div className="text-2xl mb-1">🧒</div>
+                Ages 7-9
+              </button>
+            </div>
+          </div>
+
+          <div className="progress-card-small p-4 mt-3">
+            <h3 className="mb-3 font-heading text-sm font-bold text-arcade-text-main">
+              Learning Buddy
+            </h3>
+            <div className="flex gap-3">
+              <button
+                onClick={() => updateKidSettings({ track: 'explorer' })}
+                className={`flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
+                  track === 'explorer'
+                    ? 'bg-arcade-accent-orange text-white'
+                    : 'bg-arcade-panel-light text-arcade-text-main border-2 border-arcade-panel-border'
+                }`}
+              >
+                <div className="text-2xl mb-1">🧒</div>
+                Explorer
+                <div className="text-xs mt-1 opacity-75">Learn by discovering</div>
+              </button>
+              <button
+                onClick={() => updateKidSettings({ track: 'builder' })}
+                className={`flex-1 rounded-lg px-4 py-3 text-sm font-semibold transition-all ${
+                  track === 'builder'
+                    ? 'bg-arcade-accent-orange text-white'
+                    : 'bg-arcade-panel-light text-arcade-text-main border-2 border-arcade-panel-border'
+                }`}
+              >
+                <div className="text-2xl mb-1">👷</div>
+                Builder
+                <div className="text-xs mt-1 opacity-75">Learn by creating</div>
+              </button>
+            </div>
+          </div>
+
+          <div className="progress-card-small p-4 mt-3">
+            <label className="flex items-center justify-between">
+              <span className="text-sm text-arcade-text-main">
+                Parent Mode
+              </span>
+              <input
+                type="checkbox"
+                checked={parentMode}
+                onChange={(e) => updateKidSettings({ parentMode: e.target.checked })}
+                className="h-5 w-5 rounded border-2 text-arcade-accent-blue focus:ring-arcade-accent-blue"
+              />
+            </label>
+            <p className="mt-2 text-xs text-arcade-text-muted">
+              Enable to access advanced settings
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* Game Accessibility Settings */}
       <section className="section" style={{ marginTop: '20px' }}>

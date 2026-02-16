@@ -56,7 +56,14 @@ const defaultPlayer = {
   },
   letters: {},
   latestBadge: null,
-  modesPlayed: []
+  modesPlayed: [],
+  kidMode: true, // Default to kid mode for this app
+  kidSettings: {
+    ageBand: '4-6', // '4-6' or '7-9'
+    track: 'explorer', // 'explorer' or 'builder'
+    parentMode: false, // false = kid UI, true = advanced settings accessible
+    onboardingComplete: false
+  }
 };
 
 const defaultBadges = badgesCatalog.reduce((acc, badge) => {
@@ -399,7 +406,9 @@ export function ProgressProvider({ children }) {
           labelKey: source.latestBadge.labelKey ?? tierSpec?.labelKey,
           summaryKey: source.latestBadge.summaryKey ?? badge.summaryKey
         };
-      })()
+      })(),
+      kidMode: source.kidMode ?? defaultPlayer.kidMode,
+      kidSettings: { ...defaultPlayer.kidSettings, ...(source.kidSettings ?? {}) }
     };
     if (!stored) {
       saveState(`${storagePrefix}.player`, hydrated);
@@ -1037,6 +1046,33 @@ export function ProgressProvider({ children }) {
     [applyStarsToPlayer, addToast]
   );
 
+  const updateKidSettings = useCallback((updates) => {
+    setPlayer((prev) => ({
+      ...prev,
+      kidSettings: {
+        ...prev.kidSettings,
+        ...updates
+      }
+    }));
+  }, []);
+
+  const toggleKidMode = useCallback((enabled) => {
+    setPlayer((prev) => ({
+      ...prev,
+      kidMode: enabled
+    }));
+  }, []);
+
+  const completeKidOnboarding = useCallback(() => {
+    setPlayer((prev) => ({
+      ...prev,
+      kidSettings: {
+        ...prev.kidSettings,
+        onboardingComplete: true
+      }
+    }));
+  }, []);
+
   useEffect(() => {
     const offSessionStart = on('game:session-start', (payload) => {
       setLastSession({ start: new Date().toISOString(), settings: payload?.settings ?? {}, mode: payload?.mode });
@@ -1241,9 +1277,12 @@ export function ProgressProvider({ children }) {
       getWeakestLetter: () => assets.getWeakestLetter(player.letters),
       lastSession,
       claimBadgeReward,
-      claimDailyReward
+      claimDailyReward,
+      updateKidSettings,
+      toggleKidMode,
+      completeKidOnboarding
     }),
-    [assets, player, badges, activeBadges, streak, daily, lastSession, claimBadgeReward, claimDailyReward]
+    [assets, player, badges, activeBadges, streak, daily, lastSession, claimBadgeReward, claimDailyReward, updateKidSettings, toggleKidMode, completeKidOnboarding]
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

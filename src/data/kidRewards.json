@@ -1,0 +1,124 @@
+{
+  "stickers": [
+    {
+      "id": "gold-star",
+      "emoji": "⭐",
+      "name": "Gold Star",
+      "unlockAt": 10,
+      "rarity": "common"
+    },
+    {
+      "id": "rainbow",
+      "emoji": "🌈",
+      "name": "Rainbow",
+      "unlockAt": 25,
+      "rarity": "common"
+    },
+    {
+      "id": "trophy",
+      "emoji": "🏆",
+      "name": "Trophy",
+      "unlockAt": 50,
+      "rarity": "rare"
+    },
+    {
+      "id": "rocket",
+      "emoji": "🚀",
+      "name": "Rocket",
+      "unlockAt": 75,
+      "rarity": "rare"
+    },
+    {
+      "id": "crown",
+      "emoji": "👑",
+      "name": "Crown",
+      "unlockAt": 100,
+      "rarity": "epic"
+    },
+    {
+      "id": "diamond",
+      "emoji": "💎",
+      "name": "Diamond",
+      "unlockAt": 150,
+      "rarity": "epic"
+    },
+    {
+      "id": "wizard",
+      "emoji": "🧙",
+      "name": "Wizard Hat",
+      "unlockAt": 200,
+      "rarity": "legendary"
+    }
+  ],
+  "characters": [
+    {
+      "id": "explorer",
+      "emoji": "🧒",
+      "name": "Explorer",
+      "track": "explorer",
+      "description": "Loves discovering new letters!"
+    },
+    {
+      "id": "builder",
+      "emoji": "👷",
+      "name": "Builder",
+      "track": "builder",
+      "description": "Creates amazing letter words!"
+    }
+  ],
+  "encouragements": [
+    {
+      "id": "great-job",
+      "text": "Great job!",
+      "emoji": "🎉",
+      "trigger": "correct"
+    },
+    {
+      "id": "awesome",
+      "text": "Awesome!",
+      "emoji": "⭐",
+      "trigger": "correct"
+    },
+    {
+      "id": "you-did-it",
+      "text": "You did it!",
+      "emoji": "🎊",
+      "trigger": "correct"
+    },
+    {
+      "id": "keep-trying",
+      "text": "Keep trying!",
+      "emoji": "💪",
+      "trigger": "incorrect"
+    },
+    {
+      "id": "almost",
+      "text": "So close!",
+      "emoji": "😊",
+      "trigger": "incorrect"
+    }
+  ],
+  "celebrationAnimations": [
+    {
+      "id": "confetti-burst",
+      "name": "Confetti Burst",
+      "particleCount": 150,
+      "spread": 100,
+      "trigger": "level-up"
+    },
+    {
+      "id": "star-shower",
+      "name": "Star Shower",
+      "particleCount": 80,
+      "spread": 60,
+      "trigger": "achievement"
+    },
+    {
+      "id": "rainbow-trail",
+      "name": "Rainbow Trail",
+      "particleCount": 50,
+      "spread": 40,
+      "trigger": "correct-streak"
+    }
+  ]
+}
