@@ -5,6 +5,7 @@ import AchievementsView from './views/AchievementsView.jsx';
 import LearnView from './views/LearnView.jsx';
 import SettingsView from './views/SettingsView.jsx';
 import DailyView from './views/DailyView.jsx';
+import KidsApp from './kids/KidsApp.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
 import { ProgressProvider } from './context/ProgressContext.jsx';
 import { SRSProvider } from './context/SRSContext.jsx';
@@ -292,6 +293,7 @@ function Shell() {
           <Route path="/read" element={<LearnView />} />
           <Route path="/daily" element={<DailyView />} />
           <Route path="/settings" element={<SettingsView />} />
+          <Route path="/kids" element={<KidsApp />} />
           <Route path="/play" element={<Navigate to="/home" replace />} />
         </Routes>
       </main>
