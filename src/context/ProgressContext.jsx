@@ -395,6 +395,7 @@ export function ProgressProvider({ children }) {
       levelProgress,
       totals: { ...defaultPlayer.totals, ...(source.totals ?? {}) },
       letters: assets.normalizeLetterStats(source.letters ?? {}),
+      modesPlayed: Array.isArray(source.modesPlayed) ? source.modesPlayed : [],
       latestBadge: (() => {
         if (!source.latestBadge) return null;
         const badge = badgeSpecById[source.latestBadge.id];

@@ -19,6 +19,7 @@ import MigrationInitializer from './components/MigrationInitializer.jsx';
 import PWAInstallPrompt from './components/PWAInstallPrompt.jsx';
 import KidOnboarding from './components/KidOnboarding.jsx';
 import { useProgress } from './context/ProgressContext.jsx';
+import './utils/storageCleanup.js'; // Auto-run cleanup on import
 
 function HomeIcon(props) {
   return (

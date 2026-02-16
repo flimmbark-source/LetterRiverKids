@@ -22,24 +22,30 @@ export default function KidOnboarding() {
 
   const handleAgeSelect = (age) => {
     setSelectedAge(age);
-    // Auto-speak age selection
-    const ageText = age === '4-6' ? 'Ages 4 to 6' : 'Ages 7 to 9';
-    ttsService.speakSmart({
-      nativeText: ageText,
-      nativeLocale: 'en-US',
-      mode: 'word'
-    });
+    // Auto-speak age selection (cancel any ongoing speech first)
+    ttsService.cancel();
+    setTimeout(() => {
+      const ageText = age === '4-6' ? 'Ages 4 to 6' : 'Ages 7 to 9';
+      ttsService.speakSmart({
+        nativeText: ageText,
+        nativeLocale: 'en-US',
+        mode: 'word'
+      });
+    }, 100);
   };
 
   const handleTrackSelect = (trackType) => {
     setSelectedTrack(trackType);
-    // Auto-speak track selection
-    const trackText = trackType === 'explorer' ? 'Explorer' : 'Builder';
-    ttsService.speakSmart({
-      nativeText: trackText,
-      nativeLocale: 'en-US',
-      mode: 'word'
-    });
+    // Auto-speak track selection (cancel any ongoing speech first)
+    ttsService.cancel();
+    setTimeout(() => {
+      const trackText = trackType === 'explorer' ? 'Explorer' : 'Builder';
+      ttsService.speakSmart({
+        nativeText: trackText,
+        nativeLocale: 'en-US',
+        mode: 'word'
+      });
+    }, 100);
   };
 
   const handleComplete = () => {
@@ -52,6 +58,7 @@ export default function KidOnboarding() {
   };
 
   const handleStepChange = (nextStep) => {
+    ttsService.cancel(); // Cancel any ongoing speech
     setStep(nextStep);
     // Announce step change
     if (nextStep === 2) {
