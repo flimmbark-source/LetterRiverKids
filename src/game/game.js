@@ -795,8 +795,12 @@ export function setupGame({ onReturnToMenu, onGameStart, onGameReset, languagePa
       if (withSpace.test(rawWord)) return rawWord.replace(withSpace, '').trim();
     }
 
-    return rawWord;
+    // Fallback for data strings that include an explicit transliteration prefix
+    // before the localized word (e.g. "B - בית" or "B: Balón").
+    const genericPrefixedWord = rawWord.replace(/^[A-Za-z]{1,4}\\s*[-:–—]+\\s*/, '').trim();
+    return genericPrefixedWord || rawWord;
   }
+
 
   function getCharacterAriaLabel(item = {}) {
     const symbol = getDisplaySymbol(item);
