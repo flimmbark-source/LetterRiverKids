@@ -1743,10 +1743,25 @@ function startClickMode(itemEl, payload) {
               : null;
 
             if (association) {
-              learnLetterEl.textContent = `${itemData.symbol} ${association.emoji}`;
+              const letterLabel = pronunciation
+                ? t('game.summary.soundLabel', { sound: pronunciation })
+                : transliteration;
+
+              learnLetterEl.classList.add('association-intro-pair');
+              learnLetterEl.innerHTML = `
+                <span class="association-intro-column">
+                  <span class="association-intro-symbol">${itemData.symbol}</span>
+                  <span class="association-intro-caption">${letterLabel}</span>
+                </span>
+                <span class="association-intro-column">
+                  <span class="association-intro-symbol" role="img" aria-label="${association.alt}">${association.emoji}</span>
+                  <span class="association-intro-caption">${association.word}</span>
+                </span>
+              `;
               learnName.textContent = '';
               learnSound.textContent = '';
             } else {
+              learnLetterEl.classList.remove('association-intro-pair');
               learnLetterEl.textContent = itemData.symbol;
 
               // For vocab items, show English translation in name and transliteration in sound
