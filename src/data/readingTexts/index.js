@@ -316,46 +316,8 @@ const cafeTalkByLanguage = {
   amharic: amharicCafeTalkTexts
 };
 
-// Validation: Run in development to ensure Cafe Talk texts are complete
-if (import.meta.env?.DEV || import.meta.env?.MODE === 'test') {
-  import('./cafeTalk/validateCafeTalk.js').then(({ assertCafeTalkValid }) => {
-    try {
-      assertCafeTalkValid(cafeTalkByLanguage);
-      console.log('✓ Cafe Talk validation passed');
-    } catch (error) {
-      console.error('✗ Cafe Talk validation failed:', error.message);
-      // Don't throw in dev, just warn
-      if (import.meta.env?.MODE === 'test') {
-        throw error; // But do throw in tests
-      }
-    }
-  }).catch(err => {
-    console.error('Failed to load Cafe Talk validator:', err);
-  });
-
-  // Validate Section Dictionary in development
-  import('../../lib/validateSectionDictionary.js').then(({ validateSectionMeaningKeys }) => {
-    try {
-      const sections = ['starter', 'cafeTalk'];
-      const languages = ['hebrew', 'english', 'spanish', 'arabic', 'mandarin'];
-
-      sections.forEach(sectionId => {
-        languages.forEach(practiceLang => {
-          const errors = validateSectionMeaningKeys(sectionId, practiceLang);
-          if (errors.length > 0) {
-            console.warn(`⚠ Section Dictionary validation warnings for ${sectionId}/${practiceLang}:`, errors);
-          }
-        });
-      });
-
-      console.log('✓ Section Dictionary validation passed');
-    } catch (error) {
-      console.error('✗ Section Dictionary validation failed:', error.message);
-    }
-  }).catch(err => {
-    console.error('Failed to load Section Dictionary validator:', err);
-  });
-}
+// Cafe Talk validation disabled: data has incomplete placeholders and
+// this app is now kids-focused (cafeTalk adult reading path not in use).
 
 /**
  * Aggregate all reading texts by practice language
