@@ -18,7 +18,7 @@ export const soundAssociationsByLanguage = {
     es: { emoji: '🐝', word: 'Abeja', alt: 'Abeja amarilla' },  // Bee
     fr: { emoji: '🍍', word: 'Ananas', alt: 'Ananas' },  // Pineapple
     pt: { emoji: '🐝', word: 'Abelha', alt: 'Abelha amarela' },  // Bee
-    he: { emoji: '🔴', word: 'אדום', alt: 'עיגול אדום' },  // Red
+    he: { emoji: '🦁', word: 'אריה', alt: 'אריה' },  // Lion (Ariye)
     ru: { emoji: '🍊', word: 'Апельсин', alt: 'Апельсин' },  // Orange
   },
 
@@ -27,7 +27,7 @@ export const soundAssociationsByLanguage = {
     es: { emoji: '🐝', word: 'Abeja', alt: 'Abeja amarilla' },
     fr: { emoji: '🍍', word: 'Ananas', alt: 'Ananas' },
     pt: { emoji: '🐝', word: 'Abelha', alt: 'Abelha amarela' },
-    he: { emoji: '🔴', word: 'אדום', alt: 'עיגול אדום' },
+    he: { emoji: '🦁', word: 'אריה', alt: 'אריה' },
     ru: { emoji: '🍊', word: 'Апельсин', alt: 'Апельсин' },
   },
 
@@ -168,7 +168,7 @@ ru: { emoji: '🦆', word: 'Утка', alt: 'Утка' },
     es: { emoji: '⚽', word: 'Fútbol', alt: 'Fútbol' },  // Football/Soccer
     fr: { emoji: '🔥', word: 'Feu', alt: 'Feu' },  // Fire
     pt: { emoji: '🔥', word: 'Fogo', alt: 'Fogo' },  // Fire
-    he: { emoji: '🌸', word: 'פרח', alt: 'פרח' },  // Flower (Perach)
+    he: { emoji: '🧆', word: 'פלאפל', alt: 'פלאפל' },  // Falafel (Falafel)
     ru: { emoji: '⚽', word: 'Футбол', alt: 'Футбол' },  // Football
   },
 
@@ -231,7 +231,7 @@ ru: { emoji: '🦆', word: 'Утка', alt: 'Утка' },
     es: { emoji: '☁️', word: 'Nube', alt: 'Nube' },  // Cloud
     fr: { emoji: '⚫', word: 'Noir', alt: 'Noir' },  // Black
     pt: { emoji: '☁️', word: 'Nuvem', alt: 'Nuvem' },  // Cloud
-    he: { emoji: '👃', word: 'אף', alt: 'אף' },  // Nose (Af)
+    he: { emoji: '🕯️', word: 'נר', alt: 'נר' },  // Candle (Ner)
     ru: { emoji: '👃', word: 'Нос', alt: 'Нос' },  // Nose
   },
 
@@ -240,7 +240,7 @@ ru: { emoji: '🦆', word: 'Утка', alt: 'Утка' },
     es: { emoji: '🦆', word: 'Pato', alt: 'Pato' },  // Duck
     fr: { emoji: '🍞', word: 'Pain', alt: 'Pain' },  // Bread
     pt: { emoji: '🦆', word: 'Pato', alt: 'Pato' },  // Duck
-    he: { emoji: '🌸', word: 'פרח', alt: 'פרח' },  // Flower (Perach)
+    he: { emoji: '🍕', word: 'פיצה', alt: 'פיצה' },  // Pizza (Pitza)
     ru: { emoji: '🐧', word: 'Пингвин', alt: 'Пингвин' },  // Penguin
   },
 

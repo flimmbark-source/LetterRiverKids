@@ -40,8 +40,8 @@ function clearAllTimers() {
   trackedIntervals.clear();
 }
 
-// Store the current app language ID for Association Mode (module-level variable)
-let activeAppLanguageId = 'en';
+// Store the current practice language ID for Association Mode (module-level variable)
+let activeAssociationLanguageId = 'en';
 
 export function setupGame({ onReturnToMenu, onGameStart, onGameReset, languagePack, translate, dictionary, appLanguageId = 'en', vocabData = null } = {}) {
   const scoreEl = document.getElementById('score');
@@ -114,8 +114,8 @@ export function setupGame({ onReturnToMenu, onGameStart, onGameReset, languagePa
     ? (key, replacements) => translate(key, replacements)
     : (key, replacements) => translateWithDictionary(activeDictionary, key, replacements);
 
-  // Store the app language ID for Association Mode
-  activeAppLanguageId = appLanguageId || 'en';
+  // Association mode should follow the practice language sounds, not the UI language.
+  activeAssociationLanguageId = activeLanguage.id || appLanguageId || 'en';
 
   const translateWithFallback = (key, fallback, replacements = {}) => {
     const result = t(key, replacements);
@@ -2087,7 +2087,7 @@ function startClickMode(itemEl, payload) {
         </div>`;
       } else if (associationModeEnabled && displayLabel) {
         // Check if association mode is enabled and we have an emoji for this sound
-        const association = getAssociation(displayLabel, activeAppLanguageId);
+        const association = getAssociation(displayLabel, activeAssociationLanguageId);
         if (association) {
           // Display emoji with optional word label <span class="text-xs text-arcade-text-muted">${association.word}</span>
           box.innerHTML = `<div class="flex flex-col items-center justify-center gap-1">
@@ -2220,7 +2220,7 @@ function startClickMode(itemEl, payload) {
       bucketInfoSound.textContent = choice.transliteration || choice.symbol; // Transliteration or Hebrew word
     } else if (associationModeEnabled && displayLabel) {
       // Check if association mode is enabled and we have an emoji for this sound
-      const association = getAssociation(displayLabel, activeAppLanguageId);
+      const association = getAssociation(displayLabel, activeAssociationLanguageId);
       if (association) {
         // Display emoji with word
         bucketInfoSymbol.innerHTML = `<span class="text-7xl" role="img" aria-label="${association.alt}">${association.emoji}</span>`;
@@ -2347,15 +2347,8 @@ function startClickMode(itemEl, payload) {
 
   loadSettingsFromLocalStorage();
 
-  function setAppLanguageId(nextAppLanguageId) {
-    const resolved = nextAppLanguageId || 'en';
-    if (resolved === activeAppLanguageId) return;
-
-    activeAppLanguageId = resolved;
-
-    if (associationModeEnabled && currentRound?.correctItems) {
-      generateChoices(currentRound.correctItems, itemPool);
-    }
+  function setAppLanguageId() {
+    // Kept for API compatibility. Association mode now follows practice language.
   }
 
   // Listen for changes to settings from other sources (like SettingsView)
