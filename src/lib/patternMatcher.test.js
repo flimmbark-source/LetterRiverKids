@@ -2,63 +2,120 @@
  * Tests for pattern matching utility
  */
 
+import { describe, it, expect } from 'vitest';
 import { matchesPattern, getCanonicalFromPattern } from './patternMatcher.js';
 
-// Test basic pattern matching
-console.log('Testing pattern matching...\n');
+describe('matchesPattern', () => {
+  describe('simple alternatives', () => {
+    const pattern = "{Hi, Hello}, {I'm, I am} Dani.";
 
-// Test 1: Simple alternatives
-const pattern1 = "{Hi, Hello}, {I'm, I am} Dani.";
-console.log('Pattern 1:', pattern1);
-console.log('  "Hi, I\'m Dani." should match:', matchesPattern("Hi, I'm Dani.", pattern1)); // true
-console.log('  "Hello, I am Dani." should match:', matchesPattern("Hello, I am Dani.", pattern1)); // true
-console.log('  "Hi, I am Dani." should match:', matchesPattern("Hi, I am Dani.", pattern1)); // true
-console.log('  "Hello, I\'m Dani." should match:', matchesPattern("Hello, I'm Dani.", pattern1)); // true
-console.log('  "Hey, I\'m Dani." should NOT match:', matchesPattern("Hey, I'm Dani.", pattern1)); // false
-console.log('');
+    it('matches first alternative in each group', () => {
+      expect(matchesPattern("Hi, I'm Dani.", pattern)).toBe(true);
+    });
 
-// Test 2: More complex pattern from the actual sentences
-const pattern2 = "{Hi, Hello}, {I'm, I am} Dani, {nice to meet you, nice meeting you, it's nice to meet you}.";
-console.log('Pattern 2:', pattern2);
-console.log('  "Hi, I\'m Dani, nice to meet you." should match:', matchesPattern("Hi, I'm Dani, nice to meet you.", pattern2)); // true
-console.log('  "Hello, I am Dani, nice meeting you." should match:', matchesPattern("Hello, I am Dani, nice meeting you.", pattern2)); // true
-console.log('  "Hi, I\'m Dani, it\'s nice to meet you." should match:', matchesPattern("Hi, I'm Dani, it's nice to meet you.", pattern2)); // true
-console.log('  "Hello, I am Dani, nice to meet you." should match:', matchesPattern("Hello, I am Dani, nice to meet you.", pattern2)); // true
-console.log('');
+    it('matches second alternative in each group', () => {
+      expect(matchesPattern("Hello, I am Dani.", pattern)).toBe(true);
+    });
 
-// Test 3: Case insensitivity
-const pattern3 = "{Hi, Hello} there";
-console.log('Pattern 3:', pattern3);
-console.log('  "hi there" should match:', matchesPattern("hi there", pattern3)); // true
-console.log('  "HELLO THERE" should match:', matchesPattern("HELLO THERE", pattern3)); // true
-console.log('  "Hi There" should match:', matchesPattern("Hi There", pattern3)); // true
-console.log('');
+    it('matches mixed alternatives', () => {
+      expect(matchesPattern("Hi, I am Dani.", pattern)).toBe(true);
+      expect(matchesPattern("Hello, I'm Dani.", pattern)).toBe(true);
+    });
 
-// Test 4: Extra whitespace and punctuation handling
-console.log('Pattern 1 (with extra whitespace and punctuation):');
-console.log('  "Hi,  I\'m   Dani." should match:', matchesPattern("Hi,  I'm   Dani.", pattern1)); // true
-console.log('  "Hi, I\'m Dani" (no period) should match:', matchesPattern("Hi, I'm Dani", pattern1)); // true
-console.log('  "Hi I\'m Dani" (no comma) should match:', matchesPattern("Hi I'm Dani", pattern1)); // true (punctuation optional)
-console.log('  "Hi Im Dani" (no punctuation at all) should match:', matchesPattern("Hi Im Dani", pattern1)); // true
-console.log('');
+    it('does not match unknown alternatives', () => {
+      expect(matchesPattern("Hey, I'm Dani.", pattern)).toBe(false);
+    });
+  });
 
-// Test 5: Canonical extraction
-console.log('Canonical extraction:');
-console.log('  Pattern 1 canonical:', getCanonicalFromPattern(pattern1)); // "Hi, I'm Dani."
-console.log('  Pattern 2 canonical:', getCanonicalFromPattern(pattern2)); // "Hi, I'm Dani, nice to meet you."
-console.log('');
+  describe('complex multi-group pattern', () => {
+    const pattern = "{Hi, Hello}, {I'm, I am} Dani, {nice to meet you, nice meeting you, it's nice to meet you}.";
 
-// Test 6: Pattern from greetings-2
-const pattern4 = "{Where are you from, Where do you come from}? {I am, I'm} new in the city.";
-console.log('Pattern 4:', pattern4);
-console.log('  "Where are you from? I am new in the city." should match:', matchesPattern("Where are you from? I am new in the city.", pattern4)); // true
-console.log('  "Where do you come from? I\'m new in the city." should match:', matchesPattern("Where do you come from? I'm new in the city.", pattern4)); // true
-console.log('');
+    it('matches first alternatives', () => {
+      expect(matchesPattern("Hi, I'm Dani, nice to meet you.", pattern)).toBe(true);
+    });
 
-// Test 7: User's specific case
-console.log('Test user\'s specific case:');
-console.log('  "hello I\'m Dani, nice to meet you" should match pattern 2:', matchesPattern("hello I'm Dani, nice to meet you", pattern2)); // true
-console.log('  "hello Im Dani nice to meet you" (no punctuation) should match:', matchesPattern("hello Im Dani nice to meet you", pattern2)); // true
-console.log('');
+    it('matches second alternatives', () => {
+      expect(matchesPattern("Hello, I am Dani, nice meeting you.", pattern)).toBe(true);
+    });
 
-console.log('All tests completed!');
+    it('matches third alternative in last group', () => {
+      expect(matchesPattern("Hi, I'm Dani, it's nice to meet you.", pattern)).toBe(true);
+    });
+
+    it('matches cross-combination of alternatives', () => {
+      expect(matchesPattern("Hello, I am Dani, nice to meet you.", pattern)).toBe(true);
+    });
+  });
+
+  describe('case insensitivity', () => {
+    const pattern = "{Hi, Hello} there";
+
+    it('matches lowercase input', () => {
+      expect(matchesPattern("hi there", pattern)).toBe(true);
+    });
+
+    it('matches uppercase input', () => {
+      expect(matchesPattern("HELLO THERE", pattern)).toBe(true);
+    });
+
+    it('matches mixed case input', () => {
+      expect(matchesPattern("Hi There", pattern)).toBe(true);
+    });
+  });
+
+  describe('whitespace and punctuation handling', () => {
+    const pattern = "{Hi, Hello}, {I'm, I am} Dani.";
+
+    it('tolerates extra whitespace', () => {
+      expect(matchesPattern("Hi,  I'm   Dani.", pattern)).toBe(true);
+    });
+
+    it('matches without trailing period', () => {
+      expect(matchesPattern("Hi, I'm Dani", pattern)).toBe(true);
+    });
+
+    it('matches without comma', () => {
+      expect(matchesPattern("Hi I'm Dani", pattern)).toBe(true);
+    });
+
+    it('matches without any punctuation', () => {
+      expect(matchesPattern("Hi Im Dani", pattern)).toBe(true);
+    });
+  });
+
+  describe('question mark patterns', () => {
+    const pattern = "{Where are you from, Where do you come from}? {I am, I'm} new in the city.";
+
+    it('matches first question alternative', () => {
+      expect(matchesPattern("Where are you from? I am new in the city.", pattern)).toBe(true);
+    });
+
+    it('matches second question alternative', () => {
+      expect(matchesPattern("Where do you come from? I'm new in the city.", pattern)).toBe(true);
+    });
+  });
+
+  describe('user input edge cases', () => {
+    const pattern = "{Hi, Hello}, {I'm, I am} Dani, {nice to meet you, nice meeting you, it's nice to meet you}.";
+
+    it('matches input starting with lowercase and missing some punctuation', () => {
+      expect(matchesPattern("hello I'm Dani, nice to meet you", pattern)).toBe(true);
+    });
+
+    it('matches input with no punctuation at all', () => {
+      expect(matchesPattern("hello Im Dani nice to meet you", pattern)).toBe(true);
+    });
+  });
+});
+
+describe('getCanonicalFromPattern', () => {
+  it('returns the first alternative from each group', () => {
+    const pattern = "{Hi, Hello}, {I'm, I am} Dani.";
+    expect(getCanonicalFromPattern(pattern)).toBe("Hi, I'm Dani.");
+  });
+
+  it('returns first alternative from complex pattern', () => {
+    const pattern = "{Hi, Hello}, {I'm, I am} Dani, {nice to meet you, nice meeting you, it's nice to meet you}.";
+    expect(getCanonicalFromPattern(pattern)).toBe("Hi, I'm Dani, nice to meet you.");
+  });
+});

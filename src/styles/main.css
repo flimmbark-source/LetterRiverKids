@@ -459,41 +459,48 @@ body.no-scroll {
   letter-spacing: -0.02em;
 }
 
+@keyframes hero-cta-pulse {
+  0%, 100% { box-shadow: 0 4px 0 #c85a24, 0 6px 18px rgba(200, 90, 36, 0.5); }
+  50% { box-shadow: 0 4px 0 #c85a24, 0 10px 30px rgba(200, 90, 36, 0.75); transform: scale(1.04); }
+}
+
 .hero-cta {
   position: absolute;
-  right: 12px;
-  bottom: 12px;
-  padding: 8px 16px;
+  right: 10px;
+  bottom: 10px;
+  padding: 13px 26px;
   border-radius: 999px;
   border: 0;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   font-family: "Nunito", system-ui, sans-serif;
-  color: #FFFFFF;
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  box-shadow: 0 2px 4px 0 rgba(16, 185, 129, 0.3);
+  color: #4a1a06;
+  background: radial-gradient(circle at 20% 0, #ffe6c7 0, #ffb45f 40%, #ff7a3b 100%);
+  box-shadow: 0 4px 0 #c85a24, 0 6px 18px rgba(200, 90, 36, 0.5);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  animation: hero-cta-pulse 2.4s ease-in-out infinite;
 }
 
 @media (min-width: 640px) {
   .hero-cta {
     right: 16px;
     bottom: 16px;
-    padding: 10px 20px;
-    font-size: 14px;
+    padding: 16px 36px;
+    font-size: 20px;
   }
 }
 
 .hero-cta:hover {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  box-shadow: 0 4px 8px 0 rgba(16, 185, 129, 0.4);
-  transform: translateY(-2px);
+  animation: none;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 0 #c85a24, 0 12px 30px rgba(200, 90, 36, 0.6);
 }
 
 .hero-cta:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px 0 rgba(16, 185, 129, 0.3);
+  animation: none;
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 2px 0 #c85a24, 0 4px 10px rgba(200, 90, 36, 0.4);
 }
 
 /* Section headers */
@@ -1599,19 +1606,21 @@ body.no-scroll {
 .sound-bucket {
   padding: var(--space-2); /* 16px internal */
   border-radius: var(--radius-sm); /* 8px */
-  min-height: 80px; /* Exceeds 44px touch target - accessible */
+  min-height: 90px; /* Bigger buckets for kids — was 80px */
+  border: 3px solid transparent; /* Bolder visible border on hover/highlight */
+  font-weight: 700;
 }
 
 .bucket-label {
-  font-size: var(--text-lg); /* 18px */
-  font-weight: var(--font-semibold); /* 600 */
+  font-size: var(--text-xl); /* 20px — bigger for kids */
+  font-weight: var(--font-bold); /* 700 */
   line-height: var(--line-height-tight); /* 1.2 */
   margin-bottom: var(--space-1); /* 8px */
 }
 
 .bucket-sound {
-  font-size: var(--text-sm); /* 14px */
-  font-weight: var(--font-normal); /* 400 */
+  font-size: var(--text-base); /* 16px — was 14px */
+  font-weight: var(--font-semibold); /* 600 — was 400 */
   line-height: var(--line-height-normal); /* 1.5 */
 }
 
@@ -2543,26 +2552,26 @@ body.no-scroll {
 .falling-letter {
   /* iOS safe area support for notched devices */
   padding-bottom: calc(max(var(--space-2), env(safe-area-inset-bottom)) + var(--space-1));
-  font-size: clamp(45px, 14vw, 76px);
+  font-size: clamp(54px, 16vw, 88px); /* bigger for kids — was clamp(45px, 14vw, 76px) */
   line-height: 1;
 }
 .falling-gem {
-  font-size: clamp(76px, 18vw, 120px);
+  font-size: clamp(86px, 20vw, 134px); /* bigger for kids — was clamp(76px, 18vw, 120px) */
   line-height: 1;
 }
 #learn-letter { font-size: clamp(40px, 12vw, 96px); }
 #learn-name { font-size: clamp(18px, 5vw, 28px); }
 #learn-sound { font-size: clamp(14px, 4.5vw, 22px); margin-top: 16px; }
 .catcher-box {
-  font-size: clamp(18px, 4.6vw, 24px);
+  font-size: clamp(20px, 5.2vw, 28px); /* bigger for kids — was clamp(18px, 4.6vw, 24px) */
   padding: var(--space-2); /* 16px internal */
   border-radius: var(--radius-sm); /* 8px */
   min-height: 44px; /* Fallback minimum for touch target - dynamically adjusted by JS */
 }
-.setup-label span { font-size: clamp(16px, 4.2vw, 20px); }
-.setup-label p { font-size: clamp(12px, 3.6vw, 16px); }
+.setup-label span { font-size: clamp(17px, 4.5vw, 22px); } /* was clamp(16px, 4.2vw, 20px) */
+.setup-label p { font-size: clamp(13px, 3.8vw, 17px); } /* was clamp(12px, 3.6vw, 16px) */
 #score, #level {
-  font-size: clamp(22px, 6vw, 30px);
+  font-size: clamp(26px, 7vw, 36px); /* bigger for kids — was clamp(22px, 6vw, 30px) */
 }
 .falling-letter,
 .falling-gem {
