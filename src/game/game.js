@@ -797,7 +797,10 @@ export function setupGame({ onReturnToMenu, onGameStart, onGameReset, languagePa
 
     // Fallback for data strings that include an explicit transliteration prefix
     // before the localized word (e.g. "B - בית" or "B: Balón").
-    const genericPrefixedWord = rawWord.replace(/^[A-Za-z]{1,4}\\s*[-:–—]+\\s*/, '').trim();
+    const genericPrefixedWord = rawWord
+      .replace(/^[A-Za-z]{1,4}\\s*[-:–—]+\\s*/, '')
+      .replace(/^[A-Za-z]{1,2}\\s+/, '')
+      .trim();
     return genericPrefixedWord || rawWord;
   }
 
