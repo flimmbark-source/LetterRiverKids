@@ -1736,18 +1736,28 @@ function startClickMode(itemEl, payload) {
           const showTime = totalDelay;
           const callback1 = () => {
             if (!gameActive || isPaused || currentRound.id !== roundId) return;
-            learnLetterEl.textContent = itemData.symbol;
             const transliteration = itemData.transliteration ?? itemData.id ?? '';
             const pronunciation = getDisplayLabel(itemData);
-            
-            // For vocab items, show English translation in name and transliteration in sound
-            // For regular items, show transliteration in name and "Sound: [pronunciation]" in sound
-            if (itemData.sourceMode === 'vocab') {
-              learnName.textContent = itemData.name; // English translation
-              learnSound.textContent = transliteration; // transliteration
+            const association = associationModeEnabled && pronunciation
+              ? getAssociation(pronunciation, activeAssociationLanguageId)
+              : null;
+
+            if (association) {
+              learnLetterEl.textContent = `${itemData.symbol} ${association.emoji}`;
+              learnName.textContent = '';
+              learnSound.textContent = '';
             } else {
-              learnName.textContent = transliteration;
-              learnSound.textContent = pronunciation ? t('game.summary.soundLabel', { sound: pronunciation }) : '';
+              learnLetterEl.textContent = itemData.symbol;
+
+              // For vocab items, show English translation in name and transliteration in sound
+              // For regular items, show transliteration in name and "Sound: [pronunciation]" in sound
+              if (itemData.sourceMode === 'vocab') {
+                learnName.textContent = itemData.name; // English translation
+                learnSound.textContent = transliteration; // transliteration
+              } else {
+                learnName.textContent = transliteration;
+                learnSound.textContent = pronunciation ? t('game.summary.soundLabel', { sound: pronunciation }) : '';
+              }
             }
             learnOverlay.classList.add('visible');
             startItemDrop(itemData, roundId);
