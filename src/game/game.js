@@ -1744,8 +1744,10 @@ function startClickMode(itemEl, payload) {
 
             if (association) {
               learnLetterEl.textContent = `${itemData.symbol} ${association.emoji}`;
-              learnName.textContent = '';
-              learnSound.textContent = '';
+              learnName.textContent = association.word;
+              learnSound.textContent = pronunciation
+                ? t('game.summary.soundLabel', { sound: pronunciation })
+                : transliteration;
             } else {
               learnLetterEl.textContent = itemData.symbol;
 
