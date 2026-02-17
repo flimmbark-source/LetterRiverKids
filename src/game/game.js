@@ -781,6 +781,27 @@ export function setupGame({ onReturnToMenu, onGameStart, onGameReset, languagePa
     return item.pronunciation ?? item.sound ?? '';
   }
 
+  function getAssociationCaption(word, labels = []) {
+    const rawWord = String(word ?? '').trim();
+    if (!rawWord) return '';
+
+    const uniqueLabels = [...new Set(labels.map((label) => String(label ?? '').trim()).filter(Boolean))];
+    for (const label of uniqueLabels) {
+      const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const withSeparator = new RegExp(`^${escaped}\\s*[-:–—]+\\s*`, 'i');
+      if (withSeparator.test(rawWord)) return rawWord.replace(withSeparator, '').trim();
+
+      const withSpace = new RegExp(`^${escaped}\\s+`, 'i');
+      if (withSpace.test(rawWord)) return rawWord.replace(withSpace, '').trim();
+    }
+
+    // Fallback for data strings that include an explicit transliteration prefix
+    // before the localized word (e.g. "B - בית" or "B: Balón").
+    const genericPrefixedWord = rawWord.replace(/^[A-Za-z]{1,4}\\s*[-:–—]+\\s*/, '').trim();
+    return genericPrefixedWord || rawWord;
+  }
+
+
   function getCharacterAriaLabel(item = {}) {
     const symbol = getDisplaySymbol(item);
     if (!symbol) return '';
@@ -1743,6 +1764,7 @@ function startClickMode(itemEl, payload) {
               : null;
 
             if (association) {
+              const associationCaption = getAssociationCaption(association.word, [transliteration, pronunciation]);
               const letterLabel = pronunciation
                 ? t('game.summary.soundLabel', { sound: pronunciation })
                 : transliteration;
@@ -1755,7 +1777,7 @@ function startClickMode(itemEl, payload) {
                 </span>
                 <span class="association-intro-column">
                   <span class="association-intro-symbol" role="img" aria-label="${association.alt}">${association.emoji}</span>
-                  <span class="association-intro-caption">${association.word}</span>
+                  <span class="association-intro-caption">${associationCaption || association.word}</span>
                 </span>
               `;
               learnName.textContent = '';
