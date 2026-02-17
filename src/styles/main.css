@@ -2562,6 +2562,29 @@ body.no-scroll {
 #learn-letter { font-size: clamp(40px, 12vw, 96px); }
 #learn-name { font-size: clamp(18px, 5vw, 28px); }
 #learn-sound { font-size: clamp(14px, 4.5vw, 22px); margin-top: 16px; }
+#learn-letter.association-intro-pair {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  font-size: inherit;
+}
+#learn-letter.association-intro-pair .association-intro-column {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+#learn-letter.association-intro-pair .association-intro-symbol {
+  font-size: clamp(40px, 12vw, 96px);
+  line-height: 1;
+}
+#learn-letter.association-intro-pair .association-intro-caption {
+  font-size: clamp(11px, 2.6vw, 14px);
+  font-weight: 600;
+  line-height: 1.2;
+  color: #6c3b14;
+}
 .catcher-box {
   font-size: clamp(20px, 5.2vw, 28px); /* bigger for kids — was clamp(18px, 4.6vw, 24px) */
   padding: var(--space-2); /* 16px internal */
@@ -2723,6 +2746,7 @@ body.no-scroll {
   transform: translate(-50%, 0);
   opacity: 1;
 }
+
 #bucket-info-overlay {
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
   transform: translate(-50%, -50%) scale(0.8);
