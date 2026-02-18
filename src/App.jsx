@@ -1,10 +1,11 @@
 import React from 'react';
-import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import HomeView from './views/HomeView.jsx';
 import AchievementsView from './views/AchievementsView.jsx';
 import LearnView from './views/LearnView.jsx';
 import SettingsView from './views/SettingsView.jsx';
 import DailyView from './views/DailyView.jsx';
+import KidsApp from './kids/KidsApp.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
 import { ProgressProvider } from './context/ProgressContext.jsx';
 import { SRSProvider } from './context/SRSContext.jsx';
@@ -233,12 +234,14 @@ function LanguageOnboardingModal() {
 }
 
 function Shell() {
+  const location = useLocation();
   const { openGame, closeGame, isVisible: isGameVisible, isGameRunning } = useGame();
   const { t, interfaceLanguagePack } = useLocalization();
   const { currentTutorial, currentStepIndex } = useTutorial();
   const fontClass = interfaceLanguagePack.metadata?.fontClass ?? 'language-font-hebrew';
   const direction = interfaceLanguagePack.metadata?.textDirection ?? 'ltr';
   const [inConversationPractice, setInConversationPractice] = React.useState(false);
+  const isKidsRoute = location.pathname.startsWith('/kids');
 
   // Check if we're in conversation practice mode
   React.useEffect(() => {
@@ -281,21 +284,22 @@ function Shell() {
 
   return (
     <div className="app-shell">
-      <LanguageOnboardingModal />
-      <OfflineIndicator />
-      <PWAInstallPrompt />
+      {!isKidsRoute ? <LanguageOnboardingModal /> : null}
+      {!isKidsRoute ? <OfflineIndicator /> : null}
+      {!isKidsRoute ? <PWAInstallPrompt /> : null}
       <main className="flex-1 main-content">
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/" element={<Navigate to="/kids" replace />} />
           <Route path="/home" element={<HomeView />} />
           <Route path="/achievements" element={<AchievementsView />} />
           <Route path="/read" element={<LearnView />} />
           <Route path="/daily" element={<DailyView />} />
           <Route path="/settings" element={<SettingsView />} />
-          <Route path="/play" element={<Navigate to="/home" replace />} />
+          <Route path="/kids" element={<KidsApp />} />
+          <Route path="/play" element={<Navigate to="/kids" replace />} />
         </Routes>
       </main>
-      {!(isGameVisible && isGameRunning) && !inConversationPractice && (
+      {!isKidsRoute && !(isGameVisible && isGameRunning) && !inConversationPractice && (
         <nav className="bottom-nav">
           <NavLink to="/home" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={handleNavClick}>
             <div className="nav-icon-shell">
