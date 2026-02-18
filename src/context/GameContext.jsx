@@ -46,17 +46,18 @@ export function GameProvider({ children }) {
     } catch (error) {
       console.error('Failed to load game settings:', error);
     }
-    // Return defaults if no saved settings
+    // Return kid-first defaults if no saved settings
     return {
       showIntroductions: true,
       highContrast: false,
       randomLetters: false,
       reducedMotion: false,
-      gameSpeed: 17,
+      gameSpeed: 14,
       gameFont: 'default',
       fontShuffle: false,
       slowRiver: false,
       clickMode: false,
+      associationMode: true,
     };
   }, []);
 
@@ -1093,7 +1094,7 @@ function GameCanvas({ fontClass, loadedSettings }) {
               <input
                 id="association-mode-toggle"
                 type="checkbox"
-                defaultChecked={loadedSettings.associationMode}
+                defaultChecked={loadedSettings.associationMode ?? true}
                 className="h-5 w-5 rounded border-2 text-orange-600 focus:ring-orange-500"
                 style={{ borderColor: '#e49b5a', accentColor: '#ff9247' }}
               />

@@ -32,15 +32,15 @@
       "home": "Home",
       "play": "Play",
       "achievements": "Achievements",
-      "read": "Read",
+      "read": "Learn",
       "settings": "Settings"
     },
     "languagePicker": {
       "label": "App Language",
       "helper": "Set the interface language.",
-      "onboardingTitle": "Choose Your Languages",
-      "onboardingSubtitle": "This app was developed to allow you to practice the alphabets of other langauges in your own native tongue.",
-      "confirm": "Start learning"
+      "onboardingTitle": "Welcome to Letter River!",
+      "onboardingSubtitle": "Hi there! Choose the language you understand best, then pick a fun alphabet to explore. Caregivers: you can change these anytime in Settings.",
+      "confirm": "Let's Play!"
     },
     "practicePicker": {
       "label": "Practice Language",
@@ -63,7 +63,7 @@
       }
     },
     "recentLetters": {
-      "title": "Recently Learned Letters"
+      "title": "Your Letters"
     },
     "languagePicker": {
       "label": "Practice Language",
@@ -72,10 +72,10 @@
     "cta": {
       "start": "Start a New Run",
       "practice": "Practice Focus Letter",
-      "play": "Play"
+      "play": "Play Now!"
     },
     "progress": {
-      "heading": "Progress",
+      "heading": "Your Progress",
       "streak": "Streak",
       "days": "{{count}} days",
       "resetsAt": "Resets at 00:00 Asia/Jerusalem ({{time}})",
@@ -85,7 +85,7 @@
       "toNextLevel": "{{current}} / {{total}} ⭐ to next level",
       "latestBadge": "Latest badge",
       "tier": "Tier {{tier}}",
-      "playToUnlock": "Play a session to start unlocking achievements."
+      "playToUnlock": "Play a game to start collecting badges!"
     },
     "quest": {
       "label": "Quest {{current}} of {{total}}",
@@ -112,7 +112,7 @@
       "leave": "Leave Game",
       "exitToMenu": "⬅",
       "backToMenu": "Back to menu",
-      "start": "Start Game",
+      "start": "Start!",
       "playAgain": "Play Again",
       "install": "Install App",
       "accessibility": "Accessibility Options",
@@ -126,7 +126,7 @@
     },
     "setup": {
       "title": "Letter River",
-      "subtitleFallback": "Drag the letters to the correct boxes!",
+      "subtitleFallback": "Catch the letters and drop them in the right bucket!",
       "prompt": "Choose what to practice:",
       "goal": "Goal",
       "goalTooltip": "Beat this level to win the game!",
@@ -279,8 +279,8 @@
     "summary": {
       "heading": "Letters Encountered",
       "empty": "No stats to show for this round.",
-      "gameOver": "Game Over",
-      "finalScore": "Final Score: {{score}}",
+      "gameOver": "Good Try! 💪",
+      "finalScore": "Score: {{score}} — Great effort!",
       "weakestLink": "Weakest Link",
       "weakestLinkDescription": "Focus on this item next time.",
       "characterLabel": "Character {{symbol}}",
@@ -290,13 +290,13 @@
       "practice": "Practice This"
     },
     "win": {
-      "title": "You Win!",
-      "message": "You reached your goal!",
-      "correctAnswers": "correct answers in a row!",
+      "title": "Amazing! You Win! 🎉",
+      "message": "Fantastic! You reached your goal!",
+      "correctAnswers": "correct catches in a row!",
       "sessionCorrectPrefix": "You caught",
       "sessionCorrectSuffix": "letters in a row this game!",
       "totalWins": "Total wins",
-      "continue": "Continue Playing"
+      "continue": "Keep Playing!"
     },
     "status": {
       "bonusRound": "Bonus Round!",
@@ -1275,8 +1275,8 @@
   "tutorials": {
     "firstTime": {
       "welcome": {
-        "title": "Welcome to Letter River!",
-        "description": "Letter River helps you learn letters through an interactive game. First, let's set up your languages!"
+        "title": "Welcome to Letter River! 🌊",
+        "description": "Catch floating letters and drop them in the right buckets! First, a grown-up or caregiver should help you pick your languages."
       },
       "appLanguage": {
         "title": "Choose Your Interface Language",

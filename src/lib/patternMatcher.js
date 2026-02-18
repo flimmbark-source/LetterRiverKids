@@ -83,16 +83,23 @@ function generateVariants(tokens, index = 0, current = '') {
   const token = tokens[index];
   const results = [];
 
+  // Don't add a space before punctuation characters
+  const needsSpaceBefore = (str) => str && !/^[.,!?;:]/.test(str);
+
   if (Array.isArray(token)) {
     // Token is alternatives - generate a variant for each
     for (const alternative of token) {
-      const prefix = current ? `${current} ${alternative}` : alternative;
+      const prefix = current && needsSpaceBefore(alternative)
+        ? `${current} ${alternative}`
+        : `${current}${alternative}`;
       const variants = generateVariants(tokens, index + 1, prefix);
       results.push(...variants);
     }
   } else {
     // Token is plain text
-    const prefix = current ? `${current} ${token}` : token;
+    const prefix = current && needsSpaceBefore(token)
+      ? `${current} ${token}`
+      : `${current}${token}`;
     const variants = generateVariants(tokens, index + 1, prefix);
     results.push(...variants);
   }

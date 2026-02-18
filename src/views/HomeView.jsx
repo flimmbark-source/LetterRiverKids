@@ -290,7 +290,7 @@ export default function HomeView() {
       {/* Hero Card */}
       <section className="section" style={{ marginTop: '20px',  }}></section>
       <section className={classNames('hero-card', heroCardUpdate.isUpdated && 'card-updated')} style={{ position: 'relative' }}>
-        <h1 className="hero-title">{t('home.recentLetters.title')}</h1>
+        <h1 className="hero-title">🌊 {t('home.recentLetters.title')}</h1>
         <div className="hero-body" style={{ display: 'flex', gap: '12px', fontSize: '24px', flexWrap: 'wrap' }}>
           {recentLetters.map((letter, index) => (
             <span
@@ -373,7 +373,7 @@ export default function HomeView() {
         <section className="section">
           <div className="section-header">
             <div className="section-title">
-              <div className="wood-header">{t('home.dailyQuests.title')}</div>
+              <div className="wood-header">⭐ {t('home.dailyQuests.title')}</div>
             </div>
             <div className="section-link">{t('home.dailyQuests.resetsAt', { time: nextResetTime })}</div>
           </div>

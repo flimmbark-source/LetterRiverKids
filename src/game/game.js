@@ -40,8 +40,8 @@ function clearAllTimers() {
   trackedIntervals.clear();
 }
 
-// Store the current app language ID for Association Mode (module-level variable)
-let activeAppLanguageId = 'en';
+// Store the current practice language ID for Association Mode (module-level variable)
+let activeAssociationLanguageId = 'en';
 
 export function setupGame({ onReturnToMenu, onGameStart, onGameReset, languagePack, translate, dictionary, appLanguageId = 'en', vocabData = null } = {}) {
   const scoreEl = document.getElementById('score');
@@ -114,8 +114,8 @@ export function setupGame({ onReturnToMenu, onGameStart, onGameReset, languagePa
     ? (key, replacements) => translate(key, replacements)
     : (key, replacements) => translateWithDictionary(activeDictionary, key, replacements);
 
-  // Store the app language ID for Association Mode
-  activeAppLanguageId = appLanguageId || 'en';
+  // Association mode should follow the practice language sounds, not the UI language.
+  activeAssociationLanguageId = activeLanguage.id || appLanguageId || 'en';
 
   const translateWithFallback = (key, fallback, replacements = {}) => {
     const result = t(key, replacements);
@@ -780,6 +780,30 @@ export function setupGame({ onReturnToMenu, onGameStart, onGameReset, languagePa
   function getDisplayPronunciation(item = {}) {
     return item.pronunciation ?? item.sound ?? '';
   }
+
+  function getAssociationCaption(word, labels = []) {
+    const rawWord = String(word ?? '').trim();
+    if (!rawWord) return '';
+
+    const uniqueLabels = [...new Set(labels.map((label) => String(label ?? '').trim()).filter(Boolean))];
+    for (const label of uniqueLabels) {
+      const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const withSeparator = new RegExp(`^${escaped}\\s*[-:–—]+\\s*`, 'i');
+      if (withSeparator.test(rawWord)) return rawWord.replace(withSeparator, '').trim();
+
+      const withSpace = new RegExp(`^${escaped}\\s+`, 'i');
+      if (withSpace.test(rawWord)) return rawWord.replace(withSpace, '').trim();
+    }
+
+    // Fallback for data strings that include an explicit transliteration prefix
+    // before the localized word (e.g. "B - בית" or "B: Balón").
+    const genericPrefixedWord = rawWord
+      .replace(/^[A-Za-z]{1,4}\\s*[-:–—]+\\s*/, '')
+      .replace(/^[A-Za-z]{1,2}\\s+/, '')
+      .trim();
+    return genericPrefixedWord || rawWord;
+  }
+
 
   function getCharacterAriaLabel(item = {}) {
     const symbol = getDisplaySymbol(item);
@@ -1736,18 +1760,44 @@ function startClickMode(itemEl, payload) {
           const showTime = totalDelay;
           const callback1 = () => {
             if (!gameActive || isPaused || currentRound.id !== roundId) return;
-            learnLetterEl.textContent = itemData.symbol;
             const transliteration = itemData.transliteration ?? itemData.id ?? '';
             const pronunciation = getDisplayLabel(itemData);
-            
-            // For vocab items, show English translation in name and transliteration in sound
-            // For regular items, show transliteration in name and "Sound: [pronunciation]" in sound
-            if (itemData.sourceMode === 'vocab') {
-              learnName.textContent = itemData.name; // English translation
-              learnSound.textContent = transliteration; // transliteration
+            const association = associationModeEnabled && pronunciation
+              ? getAssociation(pronunciation, activeAssociationLanguageId)
+              : null;
+
+            if (association) {
+              const associationCaption = getAssociationCaption(association.word, [transliteration, pronunciation]);
+              const letterLabel = pronunciation
+                ? t('game.summary.soundLabel', { sound: pronunciation })
+                : transliteration;
+
+              learnLetterEl.classList.add('association-intro-pair');
+              learnLetterEl.innerHTML = `
+                <span class="association-intro-column">
+                  <span class="association-intro-symbol">${itemData.symbol}</span>
+                  <span class="association-intro-caption">${letterLabel}</span>
+                </span>
+                <span class="association-intro-column">
+                  <span class="association-intro-symbol" role="img" aria-label="${association.alt}">${association.emoji}</span>
+                  <span class="association-intro-caption">${associationCaption || association.word}</span>
+                </span>
+              `;
+              learnName.textContent = '';
+              learnSound.textContent = '';
             } else {
-              learnName.textContent = transliteration;
-              learnSound.textContent = pronunciation ? t('game.summary.soundLabel', { sound: pronunciation }) : '';
+              learnLetterEl.classList.remove('association-intro-pair');
+              learnLetterEl.textContent = itemData.symbol;
+
+              // For vocab items, show English translation in name and transliteration in sound
+              // For regular items, show transliteration in name and "Sound: [pronunciation]" in sound
+              if (itemData.sourceMode === 'vocab') {
+                learnName.textContent = itemData.name; // English translation
+                learnSound.textContent = transliteration; // transliteration
+              } else {
+                learnName.textContent = transliteration;
+                learnSound.textContent = pronunciation ? t('game.summary.soundLabel', { sound: pronunciation }) : '';
+              }
             }
             learnOverlay.classList.add('visible');
             startItemDrop(itemData, roundId);
@@ -2087,7 +2137,7 @@ function startClickMode(itemEl, payload) {
         </div>`;
       } else if (associationModeEnabled && displayLabel) {
         // Check if association mode is enabled and we have an emoji for this sound
-        const association = getAssociation(displayLabel, activeAppLanguageId);
+        const association = getAssociation(displayLabel, activeAssociationLanguageId);
         if (association) {
           // Display emoji with optional word label <span class="text-xs text-arcade-text-muted">${association.word}</span>
           box.innerHTML = `<div class="flex flex-col items-center justify-center gap-1">
@@ -2220,7 +2270,7 @@ function startClickMode(itemEl, payload) {
       bucketInfoSound.textContent = choice.transliteration || choice.symbol; // Transliteration or Hebrew word
     } else if (associationModeEnabled && displayLabel) {
       // Check if association mode is enabled and we have an emoji for this sound
-      const association = getAssociation(displayLabel, activeAppLanguageId);
+      const association = getAssociation(displayLabel, activeAssociationLanguageId);
       if (association) {
         // Display emoji with word
         bucketInfoSymbol.innerHTML = `<span class="text-7xl" role="img" aria-label="${association.alt}">${association.emoji}</span>`;
@@ -2347,15 +2397,8 @@ function startClickMode(itemEl, payload) {
 
   loadSettingsFromLocalStorage();
 
-  function setAppLanguageId(nextAppLanguageId) {
-    const resolved = nextAppLanguageId || 'en';
-    if (resolved === activeAppLanguageId) return;
-
-    activeAppLanguageId = resolved;
-
-    if (associationModeEnabled && currentRound?.correctItems) {
-      generateChoices(currentRound.correctItems, itemPool);
-    }
+  function setAppLanguageId() {
+    // Kept for API compatibility. Association mode now follows practice language.
   }
 
   // Listen for changes to settings from other sources (like SettingsView)

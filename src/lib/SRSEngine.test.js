@@ -32,14 +32,14 @@ describe('SRSEngine', () => {
       // For grade 4: EF' = 2.5 + (0.1 - 1 * (0.08 + 0.02)) = 2.5 + (0.1 - 0.1) = 2.5
       expect(engine.calculateEaseFactor(2.5, 4)).toBe(2.5);
 
-      // For grade 3: EF' = 2.5 + (0.1 - 2 * (0.08 + 0.08)) = 2.5 + (0.1 - 0.32) = 2.28
-      expect(engine.calculateEaseFactor(2.5, 3)).toBeCloseTo(2.28, 2);
+      // For grade 3: EF' = 2.5 + (0.1 - 2 * (0.08 + 2*0.02)) = 2.5 + (0.1 - 0.24) = 2.36
+      expect(engine.calculateEaseFactor(2.5, 3)).toBeCloseTo(2.36, 2);
 
-      // For grade 2: EF' = 2.5 + (0.1 - 3 * (0.08 + 0.18)) = 2.5 + (0.1 - 0.78) = 1.82
-      expect(engine.calculateEaseFactor(2.5, 2)).toBeCloseTo(1.82, 2);
+      // For grade 2: EF' = 2.5 + (0.1 - 3 * (0.08 + 3*0.02)) = 2.5 + (0.1 - 0.42) = 2.18
+      expect(engine.calculateEaseFactor(2.5, 2)).toBeCloseTo(2.18, 2);
 
-      // For grade 0: EF' = 2.5 + (0.1 - 5 * (0.08 + 0.5)) = 2.5 - 2.8 = -0.3 -> clamped to 1.3
-      expect(engine.calculateEaseFactor(2.5, 0)).toBe(1.3);
+      // For grade 0: EF' = 2.5 + (0.1 - 5 * (0.08 + 5*0.02)) = 2.5 + (0.1 - 0.90) = 1.70 (above min, not clamped)
+      expect(engine.calculateEaseFactor(2.5, 0)).toBeCloseTo(1.7, 2);
     });
 
     it('should enforce minimum ease factor of 1.3', () => {
@@ -262,7 +262,7 @@ describe('SRSEngine', () => {
 
       items = [
         // Due items
-        { ...mockItem, itemId: '1', itemType: 'letter', reviewCount: 1, interval: 1, dueDate: now - dayMs }, // Overdue
+        { ...mockItem, itemId: '1', itemType: 'grammar', reviewCount: 1, interval: 1, dueDate: now - dayMs }, // Overdue
         { ...mockItem, itemId: '2', itemType: 'letter', reviewCount: 1, interval: 1, dueDate: now - 0.5 * dayMs }, // Due today
         { ...mockItem, itemId: '3', itemType: 'vocabulary', reviewCount: 1, interval: 1, dueDate: now - 2 * dayMs }, // Very overdue
         { ...mockItem, itemId: '4', itemType: 'grammar', reviewCount: 1, interval: 1, dueDate: now },
