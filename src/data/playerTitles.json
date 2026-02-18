@@ -1,57 +1,57 @@
 [
   {
     "levels": [1, 2, 3, 4, 5],
-    "baseWord": "Paddler",
+    "baseWord": "Duckling",
     "adjectives": [
-      "Patient",
-      "Ponderous",
-      "Perceptive",
-      "Persistent",
-      "Powerful"
+      "Little",
+      "Curious",
+      "Brave",
+      "Splashy",
+      "Happy"
     ]
   },
   {
     "levels": [6, 7, 8, 9, 10],
-    "baseWord": "Surfer",
+    "baseWord": "Otter",
     "adjectives": [
-      "Safe",
-      "Swift",
-      "Scholarly",
-      "Stellar",
-      "Supreme"
+      "Playful",
+      "Clever",
+      "Friendly",
+      "Speedy",
+      "Super"
     ]
   },
   {
     "levels": [11, 12, 13, 14, 15],
-    "baseWord": "Navigator",
+    "baseWord": "Dolphin",
     "adjectives": [
-      "Nimble",
-      "Noble",
-      "Noted",
-      "Notable",
-      "Natural"
+      "Jumping",
+      "Shiny",
+      "Awesome",
+      "Amazing",
+      "Bright"
     ]
   },
   {
     "levels": [16, 17, 18, 19, 20],
-    "baseWord": "Voyager",
+    "baseWord": "Whale",
     "adjectives": [
-      "Valiant",
-      "Vibrant",
-      "Vigilant",
-      "Victorious",
-      "Visionary"
+      "Gentle",
+      "Wonderful",
+      "Fantastic",
+      "Incredible",
+      "Magical"
     ]
   },
   {
     "levels": [21, 22, 23, 24, 25],
-    "baseWord": "Mariner",
+    "baseWord": "Dragon",
     "adjectives": [
       "Mighty",
-      "Masterful",
-      "Majestic",
-      "Miraculous",
-      "Mythical"
+      "Golden",
+      "Sparkling",
+      "Rainbow",
+      "Legendary"
     ]
   }
 ]

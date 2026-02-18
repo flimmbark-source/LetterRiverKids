@@ -1,618 +1,233 @@
 [
   {
     "id": "first-flow",
-    "section": "classic",
+    "section": "adventure",
     "nameKey": "badges.firstFlow.name",
     "summaryKey": "badges.firstFlow.summary",
     "tiers": [
       { "tier": 1, "labelKey": "badges.firstFlow.tiers.1", "goal": 1, "stars": 10 },
-      { "tier": 2, "labelKey": "badges.firstFlow.tiers.2", "goal": 5, "stars": 25 },
-      { "tier": 3, "labelKey": "badges.firstFlow.tiers.3", "goal": 15, "stars": 60 }
+      { "tier": 2, "labelKey": "badges.firstFlow.tiers.2", "goal": 3, "stars": 20 },
+      { "tier": 3, "labelKey": "badges.firstFlow.tiers.3", "goal": 10, "stars": 40 }
     ]
   },
   {
     "id": "steady-streak",
-    "section": "classic",
+    "section": "adventure",
     "nameKey": "badges.steadyStreak.name",
     "summaryKey": "badges.steadyStreak.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.steadyStreak.tiers.1", "goal": 3, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.steadyStreak.tiers.2", "goal": 7, "stars": 40 },
-      { "tier": 3, "labelKey": "badges.steadyStreak.tiers.3", "goal": 21, "stars": 120 }
+      { "tier": 1, "labelKey": "badges.steadyStreak.tiers.1", "goal": 2, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.steadyStreak.tiers.2", "goal": 5, "stars": 30 },
+      { "tier": 3, "labelKey": "badges.steadyStreak.tiers.3", "goal": 14, "stars": 80 }
     ]
   },
   {
     "id": "letter-master",
-    "section": "classic",
+    "section": "adventure",
     "nameKey": "badges.letterMaster.name",
     "summaryKey": "badges.letterMaster.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.letterMaster.tiers.1", "goal": 10, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.letterMaster.tiers.2", "goal": 30, "stars": 60 },
-      { "tier": 3, "labelKey": "badges.letterMaster.tiers.3", "goal": 75, "stars": 150 }
+      { "tier": 1, "labelKey": "badges.letterMaster.tiers.1", "goal": 5, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.letterMaster.tiers.2", "goal": 15, "stars": 40 },
+      { "tier": 3, "labelKey": "badges.letterMaster.tiers.3", "goal": 40, "stars": 100 }
     ]
   },
   {
     "id": "dedicated-scholar",
-    "section": "classic",
+    "section": "adventure",
     "nameKey": "badges.dedicatedScholar.name",
     "summaryKey": "badges.dedicatedScholar.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.dedicatedScholar.tiers.1", "goal": 50, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.dedicatedScholar.tiers.2", "goal": 200, "stars": 45 },
-      { "tier": 3, "labelKey": "badges.dedicatedScholar.tiers.3", "goal": 500, "stars": 100 }
+      { "tier": 1, "labelKey": "badges.dedicatedScholar.tiers.1", "goal": 20, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.dedicatedScholar.tiers.2", "goal": 75, "stars": 35 },
+      { "tier": 3, "labelKey": "badges.dedicatedScholar.tiers.3", "goal": 200, "stars": 80 }
     ]
   },
   {
     "id": "rapid-learner",
-    "section": "polyglot",
+    "section": "superstar",
     "nameKey": "badges.rapidLearner.name",
     "summaryKey": "badges.rapidLearner.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.rapidLearner.tiers.1", "goal": 3, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.rapidLearner.tiers.2", "goal": 10, "stars": 65 },
-      { "tier": 3, "labelKey": "badges.rapidLearner.tiers.3", "goal": 25, "stars": 150 }
+      { "tier": 1, "labelKey": "badges.rapidLearner.tiers.1", "goal": 2, "stars": 20 },
+      { "tier": 2, "labelKey": "badges.rapidLearner.tiers.2", "goal": 5, "stars": 45 },
+      { "tier": 3, "labelKey": "badges.rapidLearner.tiers.3", "goal": 15, "stars": 100 }
     ]
   },
   {
     "id": "gem-chaser",
-    "section": "special",
+    "section": "treasure",
     "nameKey": "badges.gemChaser.name",
     "summaryKey": "badges.gemChaser.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.gemChaser.tiers.1", "goal": 5, "stars": 30 },
-      { "tier": 2, "labelKey": "badges.gemChaser.tiers.2", "goal": 15, "stars": 80 },
-      { "tier": 3, "labelKey": "badges.gemChaser.tiers.3", "goal": 40, "stars": 200 }
+      { "tier": 1, "labelKey": "badges.gemChaser.tiers.1", "goal": 3, "stars": 20 },
+      { "tier": 2, "labelKey": "badges.gemChaser.tiers.2", "goal": 8, "stars": 50 },
+      { "tier": 3, "labelKey": "badges.gemChaser.tiers.3", "goal": 20, "stars": 120 }
     ]
   },
   {
     "id": "accuracy-ace",
-    "section": "special",
+    "section": "superstar",
     "nameKey": "badges.accuracyAce.name",
     "summaryKey": "badges.accuracyAce.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.accuracyAce.tiers.1", "goal": 3, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.accuracyAce.tiers.2", "goal": 10, "stars": 50 },
-      { "tier": 3, "labelKey": "badges.accuracyAce.tiers.3", "goal": 25, "stars": 120 }
+      { "tier": 1, "labelKey": "badges.accuracyAce.tiers.1", "goal": 2, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.accuracyAce.tiers.2", "goal": 5, "stars": 35 },
+      { "tier": 3, "labelKey": "badges.accuracyAce.tiers.3", "goal": 15, "stars": 80 }
     ]
   },
   {
     "id": "speed-demon",
-    "section": "special",
+    "section": "superstar",
     "nameKey": "badges.speedDemon.name",
     "summaryKey": "badges.speedDemon.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.speedDemon.tiers.1", "goal": 3, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.speedDemon.tiers.2", "goal": 10, "stars": 65 },
-      { "tier": 3, "labelKey": "badges.speedDemon.tiers.3", "goal": 25, "stars": 150 }
+      { "tier": 1, "labelKey": "badges.speedDemon.tiers.1", "goal": 2, "stars": 20 },
+      { "tier": 2, "labelKey": "badges.speedDemon.tiers.2", "goal": 5, "stars": 45 },
+      { "tier": 3, "labelKey": "badges.speedDemon.tiers.3", "goal": 15, "stars": 100 }
     ]
   },
   {
     "id": "explorer",
-    "section": "polyglot",
+    "section": "explorer",
     "nameKey": "badges.explorer.name",
     "summaryKey": "badges.explorer.summary",
     "tiers": [
       { "tier": 1, "labelKey": "badges.explorer.tiers.1", "goal": 2, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.explorer.tiers.2", "goal": 4, "stars": 40 },
-      { "tier": 3, "labelKey": "badges.explorer.tiers.3", "goal": 6, "stars": 90 }
+      { "tier": 2, "labelKey": "badges.explorer.tiers.2", "goal": 4, "stars": 35 },
+      { "tier": 3, "labelKey": "badges.explorer.tiers.3", "goal": 6, "stars": 75 }
     ]
   },
   {
     "id": "perfectionist",
-    "section": "special",
+    "section": "superstar",
     "nameKey": "badges.perfectionist.name",
     "summaryKey": "badges.perfectionist.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.perfectionist.tiers.1", "goal": 1, "stars": 30 },
-      { "tier": 2, "labelKey": "badges.perfectionist.tiers.2", "goal": 5, "stars": 80 },
-      { "tier": 3, "labelKey": "badges.perfectionist.tiers.3", "goal": 15, "stars": 200 }
+      { "tier": 1, "labelKey": "badges.perfectionist.tiers.1", "goal": 1, "stars": 25 },
+      { "tier": 2, "labelKey": "badges.perfectionist.tiers.2", "goal": 3, "stars": 50 },
+      { "tier": 3, "labelKey": "badges.perfectionist.tiers.3", "goal": 8, "stars": 120 }
     ]
   },
   {
     "id": "marathon-runner",
-    "section": "special",
+    "section": "adventure",
     "nameKey": "badges.marathonRunner.name",
     "summaryKey": "badges.marathonRunner.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.marathonRunner.tiers.1", "goal": 3, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.marathonRunner.tiers.2", "goal": 10, "stars": 60 },
-      { "tier": 3, "labelKey": "badges.marathonRunner.tiers.3", "goal": 25, "stars": 140 }
+      { "tier": 1, "labelKey": "badges.marathonRunner.tiers.1", "goal": 2, "stars": 20 },
+      { "tier": 2, "labelKey": "badges.marathonRunner.tiers.2", "goal": 5, "stars": 40 },
+      { "tier": 3, "labelKey": "badges.marathonRunner.tiers.3", "goal": 15, "stars": 90 }
     ]
   },
   {
     "id": "variety-seeker",
-    "section": "polyglot",
+    "section": "explorer",
     "nameKey": "badges.varietySeeker.name",
     "summaryKey": "badges.varietySeeker.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.varietySeeker.tiers.1", "goal": 10, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.varietySeeker.tiers.2", "goal": 25, "stars": 55 },
-      { "tier": 3, "labelKey": "badges.varietySeeker.tiers.3", "goal": 50, "stars": 130 }
+      { "tier": 1, "labelKey": "badges.varietySeeker.tiers.1", "goal": 5, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.varietySeeker.tiers.2", "goal": 15, "stars": 40 },
+      { "tier": 3, "labelKey": "badges.varietySeeker.tiers.3", "goal": 30, "stars": 90 }
     ]
   },
   {
     "id": "early-bird",
-    "section": "dedication",
+    "section": "treasure",
     "nameKey": "badges.earlyBird.name",
     "summaryKey": "badges.earlyBird.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.earlyBird.tiers.1", "goal": 3, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.earlyBird.tiers.2", "goal": 10, "stars": 50 },
-      { "tier": 3, "labelKey": "badges.earlyBird.tiers.3", "goal": 30, "stars": 120 }
-    ]
-  },
-  {
-    "id": "night-owl",
-    "section": "dedication",
-    "nameKey": "badges.nightOwl.name",
-    "summaryKey": "badges.nightOwl.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.nightOwl.tiers.1", "goal": 3, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.nightOwl.tiers.2", "goal": 10, "stars": 50 },
-      { "tier": 3, "labelKey": "badges.nightOwl.tiers.3", "goal": 30, "stars": 120 }
+      { "tier": 1, "labelKey": "badges.earlyBird.tiers.1", "goal": 2, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.earlyBird.tiers.2", "goal": 5, "stars": 35 },
+      { "tier": 3, "labelKey": "badges.earlyBird.tiers.3", "goal": 15, "stars": 80 }
     ]
   },
   {
     "id": "comeback-kid",
-    "section": "dedication",
+    "section": "treasure",
     "nameKey": "badges.comebackKid.name",
     "summaryKey": "badges.comebackKid.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.comebackKid.tiers.1", "goal": 2, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.comebackKid.tiers.2", "goal": 5, "stars": 40 },
-      { "tier": 3, "labelKey": "badges.comebackKid.tiers.3", "goal": 10, "stars": 90 }
+      { "tier": 1, "labelKey": "badges.comebackKid.tiers.1", "goal": 1, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.comebackKid.tiers.2", "goal": 3, "stars": 30 },
+      { "tier": 3, "labelKey": "badges.comebackKid.tiers.3", "goal": 7, "stars": 60 }
     ]
   },
   {
     "id": "weekend-warrior",
-    "section": "dedication",
+    "section": "treasure",
     "nameKey": "badges.weekendWarrior.name",
     "summaryKey": "badges.weekendWarrior.summary",
     "tiers": [
       { "tier": 1, "labelKey": "badges.weekendWarrior.tiers.1", "goal": 2, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.weekendWarrior.tiers.2", "goal": 6, "stars": 45 },
-      { "tier": 3, "labelKey": "badges.weekendWarrior.tiers.3", "goal": 15, "stars": 110 }
+      { "tier": 2, "labelKey": "badges.weekendWarrior.tiers.2", "goal": 5, "stars": 35 },
+      { "tier": 3, "labelKey": "badges.weekendWarrior.tiers.3", "goal": 10, "stars": 75 }
     ]
   },
   {
     "id": "wave-rider",
-    "section": "classic",
+    "section": "adventure",
     "nameKey": "badges.waveRider.name",
     "summaryKey": "badges.waveRider.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.waveRider.tiers.1", "goal": 5, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.waveRider.tiers.2", "goal": 10, "stars": 40 },
-      { "tier": 3, "labelKey": "badges.waveRider.tiers.3", "goal": 15, "stars": 90 }
+      { "tier": 1, "labelKey": "badges.waveRider.tiers.1", "goal": 3, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.waveRider.tiers.2", "goal": 7, "stars": 30 },
+      { "tier": 3, "labelKey": "badges.waveRider.tiers.3", "goal": 12, "stars": 70 }
     ]
   },
   {
-    "id": "century-club",
-    "section": "classic",
+    "id": "centuryClub",
+    "section": "adventure",
     "nameKey": "badges.centuryClub.name",
     "summaryKey": "badges.centuryClub.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.centuryClub.tiers.1", "goal": 25, "stars": 30 },
-      { "tier": 2, "labelKey": "badges.centuryClub.tiers.2", "goal": 50, "stars": 75 },
-      { "tier": 3, "labelKey": "badges.centuryClub.tiers.3", "goal": 100, "stars": 180 }
-    ]
-  },
-  {
-    "id": "leveling-legend",
-    "section": "classic",
-    "nameKey": "badges.levelingLegend.name",
-    "summaryKey": "badges.levelingLegend.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.levelingLegend.tiers.1", "goal": 10, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.levelingLegend.tiers.2", "goal": 15, "stars": 50 },
-      { "tier": 3, "labelKey": "badges.levelingLegend.tiers.3", "goal": 20, "stars": 120 }
-    ]
-  },
-  {
-    "id": "flame-keeper",
-    "section": "classic",
-    "nameKey": "badges.flameKeeper.name",
-    "summaryKey": "badges.flameKeeper.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.flameKeeper.tiers.1", "goal": 20, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.flameKeeper.tiers.2", "goal": 50, "stars": 65 },
-      { "tier": 3, "labelKey": "badges.flameKeeper.tiers.3", "goal": 100, "stars": 150 }
-    ]
-  },
-  {
-    "id": "point-hunter",
-    "section": "classic",
-    "nameKey": "badges.pointHunter.name",
-    "summaryKey": "badges.pointHunter.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.pointHunter.tiers.1", "goal": 500, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.pointHunter.tiers.2", "goal": 1000, "stars": 55 },
-      { "tier": 3, "labelKey": "badges.pointHunter.tiers.3", "goal": 2000, "stars": 130 }
-    ]
-  },
-  {
-    "id": "grand-master",
-    "section": "classic",
-    "nameKey": "badges.grandMaster.name",
-    "summaryKey": "badges.grandMaster.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.grandMaster.tiers.1", "goal": 50, "stars": 35 },
-      { "tier": 2, "labelKey": "badges.grandMaster.tiers.2", "goal": 100, "stars": 90 },
-      { "tier": 3, "labelKey": "badges.grandMaster.tiers.3", "goal": 200, "stars": 200 }
-    ]
-  },
-  {
-    "id": "rising-star",
-    "section": "classic",
-    "nameKey": "badges.risingStar.name",
-    "summaryKey": "badges.risingStar.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.risingStar.tiers.1", "goal": 3, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.risingStar.tiers.2", "goal": 7, "stars": 40 },
-      { "tier": 3, "labelKey": "badges.risingStar.tiers.3", "goal": 12, "stars": 95 }
-    ]
-  },
-  {
-    "id": "flow-state",
-    "section": "classic",
-    "nameKey": "badges.flowState.name",
-    "summaryKey": "badges.flowState.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.flowState.tiers.1", "goal": 15, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.flowState.tiers.2", "goal": 30, "stars": 60 },
-      { "tier": 3, "labelKey": "badges.flowState.tiers.3", "goal": 50, "stars": 140 }
-    ]
-  },
-  {
-    "id": "unstoppable",
-    "section": "classic",
-    "nameKey": "badges.unstoppable.name",
-    "summaryKey": "badges.unstoppable.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.unstoppable.tiers.1", "goal": 5, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.unstoppable.tiers.2", "goal": 15, "stars": 45 },
-      { "tier": 3, "labelKey": "badges.unstoppable.tiers.3", "goal": 30, "stars": 110 }
-    ]
-  },
-  {
-    "id": "star-collector",
-    "section": "classic",
-    "nameKey": "badges.starCollector.name",
-    "summaryKey": "badges.starCollector.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.starCollector.tiers.1", "goal": 100, "stars": 30 },
-      { "tier": 2, "labelKey": "badges.starCollector.tiers.2", "goal": 300, "stars": 80 },
-      { "tier": 3, "labelKey": "badges.starCollector.tiers.3", "goal": 750, "stars": 200 }
+      { "tier": 1, "labelKey": "badges.centuryClub.tiers.1", "goal": 10, "stars": 25 },
+      { "tier": 2, "labelKey": "badges.centuryClub.tiers.2", "goal": 25, "stars": 55 },
+      { "tier": 3, "labelKey": "badges.centuryClub.tiers.3", "goal": 50, "stars": 120 }
     ]
   },
   {
     "id": "slow-steady",
-    "section": "special",
+    "section": "treasure",
     "nameKey": "badges.slowSteady.name",
     "summaryKey": "badges.slowSteady.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.slowSteady.tiers.1", "goal": 1, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.slowSteady.tiers.2", "goal": 5, "stars": 70 },
-      { "tier": 3, "labelKey": "badges.slowSteady.tiers.3", "goal": 15, "stars": 160 }
+      { "tier": 1, "labelKey": "badges.slowSteady.tiers.1", "goal": 1, "stars": 20 },
+      { "tier": 2, "labelKey": "badges.slowSteady.tiers.2", "goal": 3, "stars": 45 },
+      { "tier": 3, "labelKey": "badges.slowSteady.tiers.3", "goal": 8, "stars": 100 }
     ]
   },
   {
     "id": "click-champion",
-    "section": "special",
+    "section": "treasure",
     "nameKey": "badges.clickChampion.name",
     "summaryKey": "badges.clickChampion.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.clickChampion.tiers.1", "goal": 3, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.clickChampion.tiers.2", "goal": 10, "stars": 55 },
-      { "tier": 3, "labelKey": "badges.clickChampion.tiers.3", "goal": 25, "stars": 130 }
-    ]
-  },
-  {
-    "id": "font-chameleon",
-    "section": "special",
-    "nameKey": "badges.fontChameleon.name",
-    "summaryKey": "badges.fontChameleon.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.fontChameleon.tiers.1", "goal": 3, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.fontChameleon.tiers.2", "goal": 10, "stars": 45 },
-      { "tier": 3, "labelKey": "badges.fontChameleon.tiers.3", "goal": 25, "stars": 100 }
-    ]
-  },
-  {
-    "id": "clutch-winner",
-    "section": "special",
-    "nameKey": "badges.clutchWinner.name",
-    "summaryKey": "badges.clutchWinner.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.clutchWinner.tiers.1", "goal": 1, "stars": 30 },
-      { "tier": 2, "labelKey": "badges.clutchWinner.tiers.2", "goal": 5, "stars": 80 },
-      { "tier": 3, "labelKey": "badges.clutchWinner.tiers.3", "goal": 15, "stars": 190 }
+      { "tier": 1, "labelKey": "badges.clickChampion.tiers.1", "goal": 2, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.clickChampion.tiers.2", "goal": 5, "stars": 35 },
+      { "tier": 3, "labelKey": "badges.clickChampion.tiers.3", "goal": 15, "stars": 80 }
     ]
   },
   {
     "id": "association-expert",
-    "section": "special",
+    "section": "explorer",
     "nameKey": "badges.associationExpert.name",
     "summaryKey": "badges.associationExpert.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.associationExpert.tiers.1", "goal": 3, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.associationExpert.tiers.2", "goal": 10, "stars": 50 },
-      { "tier": 3, "labelKey": "badges.associationExpert.tiers.3", "goal": 25, "stars": 120 }
+      { "tier": 1, "labelKey": "badges.associationExpert.tiers.1", "goal": 2, "stars": 15 },
+      { "tier": 2, "labelKey": "badges.associationExpert.tiers.2", "goal": 5, "stars": 35 },
+      { "tier": 3, "labelKey": "badges.associationExpert.tiers.3", "goal": 15, "stars": 80 }
     ]
   },
   {
-    "id": "accessibility-ally",
-    "section": "special",
-    "nameKey": "badges.accessibilityAlly.name",
-    "summaryKey": "badges.accessibilityAlly.summary",
+    "id": "star-collector",
+    "section": "treasure",
+    "nameKey": "badges.starCollector.name",
+    "summaryKey": "badges.starCollector.summary",
     "tiers": [
-      { "tier": 1, "labelKey": "badges.accessibilityAlly.tiers.1", "goal": 5, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.accessibilityAlly.tiers.2", "goal": 15, "stars": 40 },
-      { "tier": 3, "labelKey": "badges.accessibilityAlly.tiers.3", "goal": 30, "stars": 90 }
-    ]
-  },
-  {
-    "id": "no-introductions",
-    "section": "special",
-    "nameKey": "badges.noIntroductions.name",
-    "summaryKey": "badges.noIntroductions.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.noIntroductions.tiers.1", "goal": 5, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.noIntroductions.tiers.2", "goal": 15, "stars": 45 },
-      { "tier": 3, "labelKey": "badges.noIntroductions.tiers.3", "goal": 35, "stars": 105 }
-    ]
-  },
-  {
-    "id": "one-shot-wonder",
-    "section": "special",
-    "nameKey": "badges.oneShotWonder.name",
-    "summaryKey": "badges.oneShotWonder.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.oneShotWonder.tiers.1", "goal": 10, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.oneShotWonder.tiers.2", "goal": 25, "stars": 55 },
-      { "tier": 3, "labelKey": "badges.oneShotWonder.tiers.3", "goal": 50, "stars": 130 }
-    ]
-  },
-  {
-    "id": "random-master",
-    "section": "special",
-    "nameKey": "badges.randomMaster.name",
-    "summaryKey": "badges.randomMaster.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.randomMaster.tiers.1", "goal": 3, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.randomMaster.tiers.2", "goal": 10, "stars": 40 },
-      { "tier": 3, "labelKey": "badges.randomMaster.tiers.3", "goal": 25, "stars": 95 }
-    ]
-  },
-  {
-    "id": "comeback-champion",
-    "section": "special",
-    "nameKey": "badges.comebackChampion.name",
-    "summaryKey": "badges.comebackChampion.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.comebackChampion.tiers.1", "goal": 2, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.comebackChampion.tiers.2", "goal": 7, "stars": 65 },
-      { "tier": 3, "labelKey": "badges.comebackChampion.tiers.3", "goal": 15, "stars": 150 }
-    ]
-  },
-  {
-    "id": "polyglot-pioneer",
-    "section": "polyglot",
-    "nameKey": "badges.polyglotPioneer.name",
-    "summaryKey": "badges.polyglotPioneer.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.polyglotPioneer.tiers.1", "goal": 3, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.polyglotPioneer.tiers.2", "goal": 6, "stars": 70 },
-      { "tier": 3, "labelKey": "badges.polyglotPioneer.tiers.3", "goal": 10, "stars": 170 }
-    ]
-  },
-  {
-    "id": "unicode-champion",
-    "section": "polyglot",
-    "nameKey": "badges.unicodeChampion.name",
-    "summaryKey": "badges.unicodeChampion.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.unicodeChampion.tiers.1", "goal": 3, "stars": 30 },
-      { "tier": 2, "labelKey": "badges.unicodeChampion.tiers.2", "goal": 5, "stars": 80 },
-      { "tier": 3, "labelKey": "badges.unicodeChampion.tiers.3", "goal": 8, "stars": 180 }
-    ]
-  },
-  {
-    "id": "rtl-expert",
-    "section": "polyglot",
-    "nameKey": "badges.rtlExpert.name",
-    "summaryKey": "badges.rtlExpert.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.rtlExpert.tiers.1", "goal": 10, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.rtlExpert.tiers.2", "goal": 25, "stars": 55 },
-      { "tier": 3, "labelKey": "badges.rtlExpert.tiers.3", "goal": 50, "stars": 130 }
-    ]
-  },
-  {
-    "id": "vowel-virtuoso",
-    "section": "polyglot",
-    "nameKey": "badges.vowelVirtuoso.name",
-    "summaryKey": "badges.vowelVirtuoso.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.vowelVirtuoso.tiers.1", "goal": 5, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.vowelVirtuoso.tiers.2", "goal": 15, "stars": 55 },
-      { "tier": 3, "labelKey": "badges.vowelVirtuoso.tiers.3", "goal": 30, "stars": 130 }
-    ]
-  },
-  {
-    "id": "final-form-master",
-    "section": "polyglot",
-    "nameKey": "badges.finalFormMaster.name",
-    "summaryKey": "badges.finalFormMaster.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.finalFormMaster.tiers.1", "goal": 5, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.finalFormMaster.tiers.2", "goal": 15, "stars": 55 },
-      { "tier": 3, "labelKey": "badges.finalFormMaster.tiers.3", "goal": 30, "stars": 130 }
-    ]
-  },
-  {
-    "id": "mode-mixer",
-    "section": "polyglot",
-    "nameKey": "badges.modeMixer.name",
-    "summaryKey": "badges.modeMixer.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.modeMixer.tiers.1", "goal": 3, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.modeMixer.tiers.2", "goal": 10, "stars": 55 },
-      { "tier": 3, "labelKey": "badges.modeMixer.tiers.3", "goal": 25, "stars": 130 }
-    ]
-  },
-  {
-    "id": "cultural-ambassador",
-    "section": "polyglot",
-    "nameKey": "badges.culturalAmbassador.name",
-    "summaryKey": "badges.culturalAmbassador.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.culturalAmbassador.tiers.1", "goal": 3, "stars": 40 },
-      { "tier": 2, "labelKey": "badges.culturalAmbassador.tiers.2", "goal": 6, "stars": 100 },
-      { "tier": 3, "labelKey": "badges.culturalAmbassador.tiers.3", "goal": 10, "stars": 250 }
-    ]
-  },
-  {
-    "id": "script-scholar",
-    "section": "polyglot",
-    "nameKey": "badges.scriptScholar.name",
-    "summaryKey": "badges.scriptScholar.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.scriptScholar.tiers.1", "goal": 3, "stars": 35 },
-      { "tier": 2, "labelKey": "badges.scriptScholar.tiers.2", "goal": 5, "stars": 90 },
-      { "tier": 3, "labelKey": "badges.scriptScholar.tiers.3", "goal": 7, "stars": 200 }
-    ]
-  },
-  {
-    "id": "alphabet-ace",
-    "section": "polyglot",
-    "nameKey": "badges.alphabetAce.name",
-    "summaryKey": "badges.alphabetAce.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.alphabetAce.tiers.1", "goal": 2, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.alphabetAce.tiers.2", "goal": 4, "stars": 60 },
-      { "tier": 3, "labelKey": "badges.alphabetAce.tiers.3", "goal": 6, "stars": 140 }
-    ]
-  },
-  {
-    "id": "language-sampler",
-    "section": "polyglot",
-    "nameKey": "badges.languageSampler.name",
-    "summaryKey": "badges.languageSampler.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.languageSampler.tiers.1", "goal": 3, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.languageSampler.tiers.2", "goal": 6, "stars": 45 },
-      { "tier": 3, "labelKey": "badges.languageSampler.tiers.3", "goal": 10, "stars": 110 }
-    ]
-  },
-  {
-    "id": "morning-glory",
-    "section": "dedication",
-    "nameKey": "badges.morningGlory.name",
-    "summaryKey": "badges.morningGlory.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.morningGlory.tiers.1", "goal": 3, "stars": 20 },
-      { "tier": 2, "labelKey": "badges.morningGlory.tiers.2", "goal": 10, "stars": 50 },
-      { "tier": 3, "labelKey": "badges.morningGlory.tiers.3", "goal": 25, "stars": 120 }
-    ]
-  },
-  {
-    "id": "lunch-learner",
-    "section": "dedication",
-    "nameKey": "badges.lunchLearner.name",
-    "summaryKey": "badges.lunchLearner.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.lunchLearner.tiers.1", "goal": 3, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.lunchLearner.tiers.2", "goal": 10, "stars": 45 },
-      { "tier": 3, "labelKey": "badges.lunchLearner.tiers.3", "goal": 25, "stars": 105 }
-    ]
-  },
-  {
-    "id": "midnight-scholar",
-    "section": "dedication",
-    "nameKey": "badges.midnightScholar.name",
-    "summaryKey": "badges.midnightScholar.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.midnightScholar.tiers.1", "goal": 3, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.midnightScholar.tiers.2", "goal": 10, "stars": 65 },
-      { "tier": 3, "labelKey": "badges.midnightScholar.tiers.3", "goal": 25, "stars": 150 }
-    ]
-  },
-  {
-    "id": "prime-time-player",
-    "section": "dedication",
-    "nameKey": "badges.primeTimePlayer.name",
-    "summaryKey": "badges.primeTimePlayer.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.primeTimePlayer.tiers.1", "goal": 3, "stars": 15 },
-      { "tier": 2, "labelKey": "badges.primeTimePlayer.tiers.2", "goal": 10, "stars": 40 },
-      { "tier": 3, "labelKey": "badges.primeTimePlayer.tiers.3", "goal": 25, "stars": 95 }
-    ]
-  },
-  {
-    "id": "perfect-week",
-    "section": "dedication",
-    "nameKey": "badges.perfectWeek.name",
-    "summaryKey": "badges.perfectWeek.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.perfectWeek.tiers.1", "goal": 1, "stars": 40 },
-      { "tier": 2, "labelKey": "badges.perfectWeek.tiers.2", "goal": 3, "stars": 100 },
-      { "tier": 3, "labelKey": "badges.perfectWeek.tiers.3", "goal": 8, "stars": 230 }
-    ]
-  },
-  {
-    "id": "monthly-maven",
-    "section": "dedication",
-    "nameKey": "badges.monthlyMaven.name",
-    "summaryKey": "badges.monthlyMaven.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.monthlyMaven.tiers.1", "goal": 1, "stars": 50 },
-      { "tier": 2, "labelKey": "badges.monthlyMaven.tiers.2", "goal": 3, "stars": 120 },
-      { "tier": 3, "labelKey": "badges.monthlyMaven.tiers.3", "goal": 6, "stars": 270 }
-    ]
-  },
-  {
-    "id": "anniversary-ace",
-    "section": "dedication",
-    "nameKey": "badges.anniversaryAce.name",
-    "summaryKey": "badges.anniversaryAce.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.anniversaryAce.tiers.1", "goal": 1, "stars": 50 },
-      { "tier": 2, "labelKey": "badges.anniversaryAce.tiers.2", "goal": 2, "stars": 150 },
-      { "tier": 3, "labelKey": "badges.anniversaryAce.tiers.3", "goal": 3, "stars": 300 }
-    ]
-  },
-  {
-    "id": "season-veteran",
-    "section": "dedication",
-    "nameKey": "badges.seasonVeteran.name",
-    "summaryKey": "badges.seasonVeteran.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.seasonVeteran.tiers.1", "goal": 4, "stars": 60 },
-      { "tier": 2, "labelKey": "badges.seasonVeteran.tiers.2", "goal": 8, "stars": 160 },
-      { "tier": 3, "labelKey": "badges.seasonVeteran.tiers.3", "goal": 12, "stars": 350 }
-    ]
-  },
-  {
-    "id": "dawn-patrol",
-    "section": "dedication",
-    "nameKey": "badges.dawnPatrol.name",
-    "summaryKey": "badges.dawnPatrol.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.dawnPatrol.tiers.1", "goal": 3, "stars": 25 },
-      { "tier": 2, "labelKey": "badges.dawnPatrol.tiers.2", "goal": 10, "stars": 65 },
-      { "tier": 3, "labelKey": "badges.dawnPatrol.tiers.3", "goal": 25, "stars": 150 }
-    ]
-  },
-  {
-    "id": "consistency-king",
-    "section": "dedication",
-    "nameKey": "badges.consistencyKing.name",
-    "summaryKey": "badges.consistencyKing.summary",
-    "tiers": [
-      { "tier": 1, "labelKey": "badges.consistencyKing.tiers.1", "goal": 14, "stars": 40 },
-      { "tier": 2, "labelKey": "badges.consistencyKing.tiers.2", "goal": 30, "stars": 110 },
-      { "tier": 3, "labelKey": "badges.consistencyKing.tiers.3", "goal": 60, "stars": 260 }
+      { "tier": 1, "labelKey": "badges.starCollector.tiers.1", "goal": 50, "stars": 25 },
+      { "tier": 2, "labelKey": "badges.starCollector.tiers.2", "goal": 150, "stars": 55 },
+      { "tier": 3, "labelKey": "badges.starCollector.tiers.3", "goal": 400, "stars": 130 }
     ]
   }
 ]

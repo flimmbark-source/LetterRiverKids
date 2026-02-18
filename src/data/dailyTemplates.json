@@ -3,14 +3,14 @@
     "id": "warmup",
     "titleKey": "daily.tasks.warmup.title",
     "descriptionKey": "daily.tasks.warmup.description",
-    "goal": 2,
+    "goal": 1,
     "type": "sessions"
   },
   {
     "id": "focus",
     "titleKey": "daily.tasks.focus.title",
     "descriptionKey": "daily.tasks.focus.description",
-    "goal": 5,
+    "goal": 3,
     "type": "letterPerfect"
   },
   {
@@ -21,31 +21,17 @@
     "type": "constraint"
   },
   {
-    "id": "accuracy-challenge",
-    "titleKey": "daily.tasks.accuracyChallenge.title",
-    "descriptionKey": "daily.tasks.accuracyChallenge.description",
-    "goal": 1,
-    "type": "highAccuracy"
-  },
-  {
-    "id": "gem-collector",
-    "titleKey": "daily.tasks.gemCollector.title",
-    "descriptionKey": "daily.tasks.gemCollector.description",
-    "goal": 2,
-    "type": "bonusRounds"
-  },
-  {
     "id": "variety-pack",
     "titleKey": "daily.tasks.varietyPack.title",
     "descriptionKey": "daily.tasks.varietyPack.description",
-    "goal": 8,
+    "goal": 5,
     "type": "uniqueLetters"
   },
   {
-    "id": "power-session",
-    "titleKey": "daily.tasks.powerSession.title",
-    "descriptionKey": "daily.tasks.powerSession.description",
-    "goal": 25,
+    "id": "letter-catcher",
+    "titleKey": "daily.tasks.letterCatcher.title",
+    "descriptionKey": "daily.tasks.letterCatcher.description",
+    "goal": 10,
     "type": "totalCatches"
   },
   {
@@ -56,32 +42,11 @@
     "type": "flawlessSession"
   },
   {
-    "id": "speed-practice",
-    "titleKey": "daily.tasks.speedPractice.title",
-    "descriptionKey": "daily.tasks.speedPractice.description",
-    "goal": 1,
-    "type": "fastMode"
-  },
-  {
     "id": "triple-threat",
     "titleKey": "daily.tasks.tripleThread.title",
     "descriptionKey": "daily.tasks.tripleThread.description",
-    "goal": 3,
+    "goal": 2,
     "type": "sessions"
-  },
-  {
-    "id": "wave-challenge",
-    "titleKey": "daily.tasks.waveChallenge.title",
-    "descriptionKey": "daily.tasks.waveChallenge.description",
-    "goal": 8,
-    "type": "waveStreak"
-  },
-  {
-    "id": "flame-builder",
-    "titleKey": "daily.tasks.flameBuilder.title",
-    "descriptionKey": "daily.tasks.flameBuilder.description",
-    "goal": 15,
-    "type": "catchStreak"
   },
   {
     "id": "slow-river-zen",
@@ -98,74 +63,11 @@
     "type": "clickModeWin"
   },
   {
-    "id": "level-climber",
-    "titleKey": "daily.tasks.levelClimber.title",
-    "descriptionKey": "daily.tasks.levelClimber.description",
-    "goal": 12,
-    "type": "reachLevel"
-  },
-  {
-    "id": "no-lives-lost",
-    "titleKey": "daily.tasks.noLivesLost.title",
-    "descriptionKey": "daily.tasks.noLivesLost.description",
-    "goal": 1,
-    "type": "fullLivesWin"
-  },
-  {
     "id": "association-practice",
     "titleKey": "daily.tasks.associationPractice.title",
     "descriptionKey": "daily.tasks.associationPractice.description",
     "goal": 1,
     "type": "associationMode"
-  },
-  {
-    "id": "multi-mode-master",
-    "titleKey": "daily.tasks.multiModeMaster.title",
-    "descriptionKey": "daily.tasks.multiModeMaster.description",
-    "goal": 1,
-    "type": "mixedModes"
-  },
-  {
-    "id": "font-flexibility",
-    "titleKey": "daily.tasks.fontFlexibility.title",
-    "descriptionKey": "daily.tasks.fontFlexibility.description",
-    "goal": 1,
-    "type": "fontShuffle"
-  },
-  {
-    "id": "random-challenge",
-    "titleKey": "daily.tasks.randomChallenge.title",
-    "descriptionKey": "daily.tasks.randomChallenge.description",
-    "goal": 1,
-    "type": "randomLetters"
-  },
-  {
-    "id": "vowel-focus",
-    "titleKey": "daily.tasks.vowelFocus.title",
-    "descriptionKey": "daily.tasks.vowelFocus.description",
-    "goal": 1,
-    "type": "vowelMode"
-  },
-  {
-    "id": "final-forms-practice",
-    "titleKey": "daily.tasks.finalFormsPractice.title",
-    "descriptionKey": "daily.tasks.finalFormsPractice.description",
-    "goal": 1,
-    "type": "finalFormsMode"
-  },
-  {
-    "id": "language-explorer",
-    "titleKey": "daily.tasks.languageExplorer.title",
-    "descriptionKey": "daily.tasks.languageExplorer.description",
-    "goal": 1,
-    "type": "newLanguage"
-  },
-  {
-    "id": "point-surge",
-    "titleKey": "daily.tasks.pointSurge.title",
-    "descriptionKey": "daily.tasks.pointSurge.description",
-    "goal": 400,
-    "type": "scorePoints"
   },
   {
     "id": "double-session",

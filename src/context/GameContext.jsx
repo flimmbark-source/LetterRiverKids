@@ -46,18 +46,18 @@ export function GameProvider({ children }) {
     } catch (error) {
       console.error('Failed to load game settings:', error);
     }
-    // Return kid-first defaults if no saved settings
+    // Return kid-first defaults — optimized for young children learning letters
     return {
-      showIntroductions: true,
+      showIntroductions: true,    // Always show letter introductions for new learners
       highContrast: false,
-      randomLetters: false,
+      randomLetters: false,       // Alphabetical order helps young kids
       reducedMotion: false,
-      gameSpeed: 14,
+      gameSpeed: 10,              // Slowest comfortable speed for small children
       gameFont: 'default',
-      fontShuffle: false,
-      slowRiver: false,
-      clickMode: false,
-      associationMode: true,
+      fontShuffle: false,         // Consistent fonts reduce confusion for beginners
+      slowRiver: true,            // Letters pause in center — no time pressure
+      clickMode: true,            // Click-to-place is easier than drag for small hands
+      associationMode: true,      // Picture-based buckets aid pre-readers
     };
   }, []);
 
