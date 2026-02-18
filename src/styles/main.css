@@ -2870,3 +2870,82 @@ body.high-contrast { background: #000; color: #fff; }
   background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(12px);
 }
+
+/* Kids mode */
+.kids-layout {
+  display: grid;
+  gap: 12px;
+}
+
+.kids-header {
+  background: #ecfccb;
+  border: 2px solid #84cc16;
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.kids-card {
+  background: #fff;
+  border: 2px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.kids-card input,
+.kids-card select,
+.kids-card button {
+  min-height: 40px;
+  font-size: 16px;
+}
+
+.kids-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 10px;
+}
+
+.kids-option {
+  border: 2px solid #94a3b8;
+  border-radius: 14px;
+  background: #f8fafc;
+  padding: 10px;
+  display: grid;
+  gap: 4px;
+  place-items: center;
+}
+
+.kids-option-emoji,
+.kids-sticker {
+  font-size: 32px;
+}
+
+.kids-target {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kids-target-letter {
+  font-size: 44px;
+  line-height: 1;
+}
+
+.kids-high-contrast {
+  background: #000;
+  color: #fff;
+  border-color: #fde047;
+}
+
+.kids-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+}
+
+.kids-sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(48px, auto));
+  gap: 8px;
+}
